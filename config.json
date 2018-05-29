@@ -1,0 +1,6 @@
+{
+    "enable": true,
+    "notice": true,
+    "notice_damage": 1000000,
+    "debug" : false
+}

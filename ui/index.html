@@ -1,0 +1,46 @@
+<html>
+<head>
+	<title> Test ui</title>
+	<link rel="stylesheet" href="main.css" />
+	<script>
+	var x
+	function xhr(url, cb) {
+		x = new XMLHttpRequest();
+		pending = true;
+		x.open("GET", "api/" + url, true);
+		x.onload = cb;
+		x.send();
+		return;
+	}
+
+	function refreshCB()
+	{
+		document.getElementById("content").innerHTML = this.responseText.replace(/(\\n|\")/gm,"");
+	}
+
+	window.addEventListener('error', function(e) {
+		_tera_client_proxy_.alert('Error: ' + e.message)
+	})
+
+	window.onload = function() {
+		_tera_client_proxy_.resize_to(300, 200)
+		_tera_client_proxy_.set_title('DPS')
+
+		var counter = 0;
+		var i = setInterval(function(){
+		    // do your thing
+				xhr("R",refreshCB)
+
+		    counter++;
+		    if(counter % 0) {
+		        //clearInterval(i);
+		    }
+		}, 1000);
+
+	}
+	</script>
+</head>
+<body>
+	<div id="content" width=200 height=200></div>
+</body>
+</html>
