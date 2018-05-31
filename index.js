@@ -419,7 +419,7 @@ module.exports = function DPS(d) {
     bossIndex = getBossIndex(targetId)
     if(bossIndex < 0) return lastDps
 
-    totalPartyDamage = Long.fromString(bosses[bossIndex].partydamage)
+    //totalPartyDamage = Long.fromString(bosses[bossIndex].partydamage)
 
     if( bosses[bossIndex].battleendtime == 0) endtime=Date.now()
     else endtime=bosses[bossIndex].battleendtime
@@ -435,6 +435,11 @@ module.exports = function DPS(d) {
 
     var cname
     var dps=0
+
+    for(i in party){
+      if( battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
+        totalPartyDamage.add(party[i].damage)
+    }
 
     for(i in party){
       if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
@@ -464,13 +469,19 @@ module.exports = function DPS(d) {
     var dps=0
 
     bossIndex = getBossIndex(targetId)
-    totalPartyDamage = Long.fromString(bosses[bossIndex].partydamage)
+    //totalPartyDamage = Long.fromString(bosses[bossIndex].partydamage)
+
     if( bosses[bossIndex].battleendtime == 0) endtime=Date.now()
     else endtime=bosses[bossIndex].battleendtime
     battleduration = Math.floor((endtime-bosses[bossIndex].battlestarttime) / 1000)
 
     var minutes = Math.floor(battleduration / 60)
     var seconds = Math.floor(battleduration % 60)
+
+    for(i in party){
+      if( battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
+        totalPartyDamage.add(party[i].damage)
+    }    
 
     if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0){
       //log('totalPartyDamage 0 or battleduration :' + battleduration)

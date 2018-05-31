@@ -19,9 +19,11 @@ Try to keep your damage over %25 in five party.
 
 ## Install
 
-1. Download the module via clicking in the button `Clone or Download` and then on `Download Zip`.
-2. Uncompress ui and place the resulting folder in `Tera-proxy\bin\node_modules`
-3. Uncompress dpsmeter and place the resulting folder in `Tera-proxy\bin\node_modules` and you're set.
+1. Download the modules([ui](https://github.com/pinkipi/ui),dps) via clicking in the button `Clone or Download` and then on `Download Zip`.
+2. Uncompress [ui](https://github.com/pinkipi/ui) and place the resulting folder in `Tera-proxy\bin\node_modules\ui`
+   go to : cd Tera-proxy\bin\node_modules\ui\
+   install express: npm i express   
+3. Uncompress dpsmeter and place the resulting folder in `Tera-proxy\bin\node_modules\dps` and you're set.
 
 ## Usage
 

@@ -1,9 +1,9 @@
 {
   "files": {
     "config.json": {"overwrite": false, "hash": "cbf3e7e1cd492d061e002b822723276bf6ee795a9de5e2c820ca75e15b901ed4"},
-    "index.js": "ddcd8900a6363c97ebc2aa005834c177caea73db0c2c030c8477c6c683c6806b",
+    "index.js": "3797817d2482a7d54ecd237f082dc80826411e68a6997ecc3607a3857785b279",
     "logger.js": "3488d2c4d7b15a99f054e712b31752e26b3edab54bedfbaec94c981b3e6cf17d",
-    "README.md": "e5a3d6b65ceed0a644add3246fa00954271d6776cc4a5976712c370a93c1624a",
+    "README.md": "ff163480e039edba7a90e730bef6e3a4a3a173a4d01e3476eadc07e82ab762a4",
     "monsters/monsters-EU-EN.xml": "f41f57e3243545383d028c92ae3ff67ecfb8062b1602d50edfabf2969df924e6",
     "monsters/monsters-EU-FR.xml": "a9a9141cba083dd6df92518a648699aa3f5e4508d109cdcd12926c2166619ab9",
     "monsters/monsters-EU-GER.xml": "e2dd52983d26e54207691b5cbbf3a29fc395abc7310b58a00951778edc3f76b3",
