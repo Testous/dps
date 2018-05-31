@@ -479,8 +479,12 @@ module.exports = function DPS(d) {
 
     var minutes = Math.floor(battleduration / 60)
     var seconds = Math.floor(battleduration % 60)
-  
-    totalPartyDamage = totalPartyDamage.add(party[i].damage)
+
+    for(j in party){
+      if( battleduration <= 0 || targetId.localeCompare(party[j].targetId) != 0) continue
+        totalPartyDamage = totalPartyDamage.add(party[j].damage)
+    }
+
     if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0){
       log('totalPartyDamage 0 or battleduration :' + battleduration)
       return
