@@ -436,12 +436,12 @@ module.exports = function DPS(d) {
     var cname
     var dps=0
 
-    log('membersDps')
     for(i in party){
       if( battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
         totalPartyDamage = totalPartyDamage.add(party[i].damage)
-        log(party[i].damage + ' : ' +totalPartyDamage.toString())
     }
+
+    //log(bosses[bossIndex].partydamage + ' : ' +totalPartyDamage.toString())
 
     for(i in party){
       if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
@@ -479,21 +479,21 @@ module.exports = function DPS(d) {
 
     var minutes = Math.floor(battleduration / 60)
     var seconds = Math.floor(battleduration % 60)
-
-    for(i in party){
-      if( battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
-        totalPartyDamage = totalPartyDamage.add(party[i].damage)
-    }
-
+  
+    totalPartyDamage = totalPartyDamage.add(party[i].damage)
     if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0){
-      //log('totalPartyDamage 0 or battleduration :' + battleduration)
+      log('totalPartyDamage 0 or battleduration :' + battleduration)
       return
     }
+
+    log(bosses[bossIndex].partydamage + ' : ' +totalPartyDamage.toString())
+
     tdamage = Long.fromString(party[i].damage)
     dps = (tdamage.div(battleduration).toNumber()>>10).toFixed(1)
     dps = numberWithCommas(dps)
     dpsmsg += dps + ' k/s'.clr('E69F00')
-    + tdamage.div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00')
+    //+ tdamage.div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00')
+    + tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00')// + newLine
     + minutes + ':'.clr('E69F00') + seconds + '\n'
 
     return dpsmsg
