@@ -436,9 +436,11 @@ module.exports = function DPS(d) {
     var cname
     var dps=0
 
+    log('membersDps')
     for(i in party){
       if( battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
-        totalPartyDamage.add(party[i].damage)
+        totalPartyDamage = totalPartyDamage.add(party[i].damage)
+        log(party[i].damage + ' : ' +totalPartyDamage.toString())
     }
 
     for(i in party){
@@ -480,8 +482,8 @@ module.exports = function DPS(d) {
 
     for(i in party){
       if( battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
-        totalPartyDamage.add(party[i].damage)
-    }    
+        totalPartyDamage = totalPartyDamage.add(party[i].damage)
+    }
 
     if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0){
       //log('totalPartyDamage 0 or battleduration :' + battleduration)
