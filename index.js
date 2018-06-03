@@ -75,6 +75,10 @@ module.exports = function DPS(d) {
 
   d.hook('S_SPAWN_ME',2, (e) => {
     mygId=e.gameId.toString()
+    //console.log(e)
+    currentbossId = ''
+    bosses = []
+    NPCs = []
   })
 
   function putMeInParty()
@@ -145,6 +149,7 @@ module.exports = function DPS(d) {
     //log('S_SPAWN_NPC : '+ newNPC.name +' newNPC.gameId ' + newNPC.gameId +' newNPC.owner '+ newNPC.owner);
     NPCs.push(newNPC)
   })
+
 
   function isMemberPet(gid)
   {
@@ -490,7 +495,7 @@ module.exports = function DPS(d) {
       return
     }
 
-    log(bosses[bossIndex].partydamage + ' : ' +totalPartyDamage.toString())
+    //log(bosses[bossIndex].partydamage + ' : ' +totalPartyDamage.toString())
 
     tdamage = Long.fromString(party[i].damage)
     dps = (tdamage.div(battleduration).toNumber()>>10).toFixed(1)
