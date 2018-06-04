@@ -11,7 +11,7 @@ const fs = require('fs')
 const path = require('path')
 const UI = require('ui')
 
-String.prototype.clr = function (hexColor) { return `<font color="#${hexColor}">${this}</font>` }
+String.prototype.clr = function (hexColor) { return `<font color='#${hexColor}'>${this}</font>` }
 
 const errorHandler = {
   warning(msg) {
@@ -89,7 +89,8 @@ module.exports = function DPS(d) {
       'name' : myname,
       'class' : '',
       'targetId'  :  'NONE',
-      'damage'  :  'NONE'
+      'damage'  :  'NONE',
+      'critDamage' : 'NONE'
     }
 
     if(!isPartyMember(mygId)) {
@@ -220,7 +221,8 @@ module.exports = function DPS(d) {
         'name' : member.name.toString(),
         'class' : member.class.toString(),
         'targetId'  :  'NONE',
-        'damage'  :  'NONE'
+        'damage'  :  'NONE',
+        'critDamage' : 'NONE'
       }
       if(!isPartyMember(member.gameId.toString())) {
         //log('S_PARTY_MEMBER_LIST :' + newmember.name)
@@ -254,7 +256,7 @@ module.exports = function DPS(d) {
     //mygId = '216313519602687756'
     target = e.target.toString()
     if(memberIndex >= 0  && e.damage > 0 && isBoss(target) ){
-      addMemberDamage(sourceId,target,e.damage.toString())
+      addMemberDamage(sourceId,target,e.damage.toString(),e.crit)
       if(mygId.localeCompare(sourceId) == 0 && e.damage.gt(notice_damage)) {
         toNotice(myDps(memberIndex,target))
       }
@@ -386,7 +388,7 @@ module.exports = function DPS(d) {
     return 0
   }
 
-  function addMemberDamage(id,target,damage)
+  function addMemberDamage(id,target,damage,crit)
   {
     bossindex = getBossIndex(target)
     if( bossindex >= 0 && bosses[bossindex].battlestarttime == 0){
@@ -402,11 +404,14 @@ module.exports = function DPS(d) {
         {
           //party[i].damage = tdamage.add(damage).toString()
           party[i].damage = Long.fromString(damage).add(party[i].damage).toString()
+          if(crit) party[i].critDamage = Long.fromString(party[i].critDamage).add(damage).toString()
         }
         else{ // new monster
           party[i].battlestarttime = Date.now()
           party[i].targetId = target
           party[i].damage = damage
+          if(crit) party[i].critDamage = damage
+          else party[i].critDamage = 0
         }
       }
     }
@@ -419,6 +424,7 @@ module.exports = function DPS(d) {
     var dpsmsg = newLine
     var bossIndex = -1
     var tdamage = new Long(0,0)
+    var cdamage = new Long(0,0)
     var totalPartyDamage = new Long(0,0)
     bossIndex = getBossIndex(targetId)
     if(bossIndex < 0) return lastDps
@@ -428,13 +434,14 @@ module.exports = function DPS(d) {
     if( bosses[bossIndex].battleendtime == 0) endtime=Date.now()
     else endtime=bosses[bossIndex].battleendtime
 
-    battleduration = Math.floor((endtime-bosses[bossIndex].battlestarttime) / 1000)
+    if(bosses[bossIndex].battlestarttime == 0 ) battleduration = 0
+    else battleduration = Math.floor((endtime-bosses[bossIndex].battlestarttime) / 1000)
 
     var minutes = Math.floor(battleduration / 60)
     var seconds = Math.floor(battleduration % 60)
 
     dpsmsg = findZoneMonster(bosses[bossIndex].huntingZoneId,bosses[bossIndex].templateId)  + ' ' + minutes + ':' + seconds + newLine
-    dpsmsg = dpsmsg.clr('ffff00')
+    dpsmsg = dpsmsg.clr('E69F00')
 
     party.sort(function(a,b) {return (Number(a.damage) < Number(b.damage)) ? 1 : ((Number(b.damage) < Number(a.damage)) ? -1 : 0);} );
 
@@ -451,7 +458,8 @@ module.exports = function DPS(d) {
     for(i in party){
       if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
       tdamage = Long.fromString(party[i].damage)
-      //dpsmsg += party[i].name + ' ' + tdamage.shr(10).div(battleduration).toNumber() + 'k/s '.clr('E69F00')
+      cdamage = Long.fromString(party[i].critDamage)
+
       cname=party[i].name
       if(party[i].gameId.localeCompare(mygId) == 0) cname=cname.clr('00FF00')
 
@@ -459,7 +467,8 @@ module.exports = function DPS(d) {
       dps = numberWithCommas(dps)
 
       dpsmsg += cname + ' ' + dps + 'k/s '.clr('E69F00')
-      + tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00') + newLine
+      + tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00')
+      + cdamage.shr(10).multiply(1000).div(tdamage.shr(10)).toNumber()/10  + '% '.clr('E69F00') + newLine
     }
     lastDps = dpsmsg
     return dpsmsg
