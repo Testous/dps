@@ -304,8 +304,8 @@ module.exports = function DPS(d) {
       }
       catch(err){
         log('ERROR :' + err)
-        conlsole.log(gzoneId)
-        conlsole.log(gmonsterId)
+        console.log(gzoneId)
+        console.log(gmonsterId)
         return monsterId.toString() + ':' +zoneId.toString()
       }
     }
@@ -415,7 +415,7 @@ module.exports = function DPS(d) {
 
   function membersDps(targetId)
   {
-    var newLine = '\n</br>'
+    var newLine = '\n</br></br>'
     var endtime = 0
     var dpsmsg = newLine
     var bossIndex = -1
@@ -434,7 +434,8 @@ module.exports = function DPS(d) {
     var minutes = Math.floor(battleduration / 60)
     var seconds = Math.floor(battleduration % 60)
 
-    dpsmsg += findZoneMonster(bosses[bossIndex].huntingZoneId,bosses[bossIndex].templateId)  + ' ' + minutes + ':'.clr('E69F00') + seconds + newLine
+    dpsmsg = findZoneMonster(bosses[bossIndex].huntingZoneId,bosses[bossIndex].templateId)  + ' ' + minutes + ':' + seconds + newLine
+    dpsmsg = dpsmsg.clr('ffff00')
 
     party.sort(function(a,b) {return (Number(a.damage) < Number(b.damage)) ? 1 : ((Number(b.damage) < Number(a.damage)) ? -1 : 0);} );
 
@@ -453,7 +454,7 @@ module.exports = function DPS(d) {
       tdamage = Long.fromString(party[i].damage)
       //dpsmsg += party[i].name + ' ' + tdamage.shr(10).div(battleduration).toNumber() + 'k/s '.clr('E69F00')
       cname=party[i].name
-      if(party[i].gameId.localeCompare(mygId) == 0) cname=cname.clr('33FF33')
+      if(party[i].gameId.localeCompare(mygId) == 0) cname=cname.clr('00FF00')
 
       dps = (tdamage.div(battleduration).toNumber()/1000).toFixed(1)
       dps = numberWithCommas(dps)

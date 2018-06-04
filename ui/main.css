@@ -3,11 +3,14 @@
   margin: 0;
   border: 0;
   font: normal 14px Arial, Helvetica, sans-serif;
-  color: #D8DEE9;
 }
 
 html {
   overflow: hidden;
   box-sizing: border-box;
   background-color: #2E3440;
+}
+
+body {
+    color: #FFFFFF;
 }

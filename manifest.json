@@ -1,7 +1,7 @@
 {
   "files": {
     "config.json": {"overwrite": false, "hash": "cbf3e7e1cd492d061e002b822723276bf6ee795a9de5e2c820ca75e15b901ed4"},
-    "index.js": "99302b0b55fe860451e9bbe838823047891f70897e892907b4cea0f1f02a326c",
+    "index.js": "9ccc4cb6efec04072f86b1333bfc0dff978aff7f97be610c89de2720b3d95548",
     "logger.js": "3488d2c4d7b15a99f054e712b31752e26b3edab54bedfbaec94c981b3e6cf17d",
     "README.md": "ff163480e039edba7a90e730bef6e3a4a3a173a4d01e3476eadc07e82ab762a4",
     "monsters/monsters-EU-EN.xml": "f41f57e3243545383d028c92ae3ff67ecfb8062b1602d50edfabf2969df924e6",
