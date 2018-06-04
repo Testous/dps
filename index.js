@@ -411,7 +411,7 @@ module.exports = function DPS(d) {
           party[i].targetId = target
           party[i].damage = damage
           if(crit) party[i].critDamage = damage
-          else party[i].critDamage = 0
+          else party[i].critDamage = "0"
         }
       }
     }
