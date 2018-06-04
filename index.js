@@ -68,7 +68,7 @@ module.exports = function DPS(d) {
     mygId=e.gameId.toString()
     myplayerId=e.playerId.toString()
     myname=e.name.toString()
-    log('gameId:' + mygId)
+    //log('gameId:' + mygId)
     party = []
     putMeInParty()
   })
@@ -122,9 +122,8 @@ module.exports = function DPS(d) {
         'battlestarttime' : 0,
         'battleendtime' : 0
       }
-      //log('S_BOSS_GAGE_INFO :' + newboss.bossId)
       bosses.push(newboss)
-      log('New monster ' + e.templateId.toString() + ' '+ findZoneMonster(e.huntingZoneId,e.templateId))
+      //log('S_BOSS_GAGE_INFO :' + newboss.bossId + ' New monster ' + e.templateId.toString() + ' '+ findZoneMonster(e.huntingZoneId,e.templateId))
     }
     else{
       id=e.id.toString()
@@ -393,7 +392,7 @@ module.exports = function DPS(d) {
     if( bossindex >= 0 && bosses[bossindex].battlestarttime == 0){
       bosses[bossindex].battlestarttime = Date.now()
       currentbossId = target
-      log('addMemberDamage' + id + ' ' + target + ' ' + damage)
+      //log('addMemberDamage' + id + ' ' + target + ' ' + damage)
     }
 
     //tdamage = new Long.fromString(getPartyMemberDamage(id).toString())
@@ -492,7 +491,7 @@ module.exports = function DPS(d) {
     }
 
     if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0){
-      log('totalPartyDamage 0 or battleduration :' + battleduration)
+      //log('totalPartyDamage 0 or battleduration :' + battleduration)
       return
     }
 
