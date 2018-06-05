@@ -5,7 +5,7 @@ Donation.
 
 ## Introduction
 
-Tera DPS meter.
+Tera DPS meter.(only for boss monster)
 Targeting less cpu/memory resources.
 Enraged notifies in real time by notice message size as like picture.
 

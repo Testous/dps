@@ -512,10 +512,10 @@ module.exports = function DPS(d) {
     tdamage = Long.fromString(party[i].damage)
     dps = (tdamage.div(battleduration).toNumber()>>10).toFixed(1)
     dps = numberWithCommas(dps)
-    dpsmsg += dps + ' k/s'.clr('E69F00')
+    dpsmsg += dps// + ' k/s'.clr('E69F00')
     //+ tdamage.div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00')
-    + tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00')// + newLine
-    + minutes + ':'.clr('E69F00') + seconds + '\n'
+    //+ tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00')// + newLine
+    //+ minutes + ':'.clr('E69F00') + seconds + '\n'
 
     return dpsmsg
   }
