@@ -259,7 +259,7 @@ module.exports = function DPS(d) {
     if(memberIndex >= 0  && e.damage > 0 && isBoss(target) ){
       addMemberDamage(sourceId,target,e.damage.toString(),e.crit)
       if(mygId.localeCompare(sourceId) == 0 && e.damage.gt(notice_damage)) {
-        toNotice(myDps(memberIndex,target))
+        toNotice(myDps(memberIndex,e.damage,target))
       }
     }
 
@@ -477,11 +477,11 @@ module.exports = function DPS(d) {
     return dpsmsg
   }
 
-  function myDps(i,targetId)
+  function myDps(i,damage,targetId)
   {
 
     var endtime = 0
-    var dpsmsg = '\n'
+    var dpsmsg = ''
     var bossIndex = -1
     var tdamage = new Long(0,0)
     var totalPartyDamage  = new Long(0,0)
@@ -512,10 +512,7 @@ module.exports = function DPS(d) {
     tdamage = Long.fromString(party[i].damage)
     dps = (tdamage.div(battleduration).toNumber()>>10).toFixed(1)
     dps = numberWithCommas(dps)
-    dpsmsg += dps// + ' k/s'.clr('E69F00')
-    //+ tdamage.div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00')
-    //+ tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00')// + newLine
-    //+ minutes + ':'.clr('E69F00') + seconds + '\n'
+    dpsmsg = numberWithCommas(damage.shr(10).toString()) + ' k '.clr('E69F00') + dps + ' k/s '.clr('E69F00')
 
     return dpsmsg
   }
