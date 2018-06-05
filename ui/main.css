@@ -14,3 +14,11 @@ html {
 body {
     color: #FFFFFF;
 }
+
+table ,td, tr{
+  border-collapse:collapse;
+  border: 1px solid;
+  vertical-align: center;
+  text-align: right;
+  padding : 3;
+}

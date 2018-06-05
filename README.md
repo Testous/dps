@@ -1,7 +1,7 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-ff69b4.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=C6BU555NMQJD6)
 Donation link for the origin repository developer.
 
-![DPS](https://preview.ibb.co/hD7x8J/dps.jpg)
+![DPS](https://preview.ibb.co/n7X8f8/dps.jpg)
 
 ## Introduction
 
@@ -27,11 +27,10 @@ Try to keep your damage over %25 in five party.
 
 ## Usage
 
-- type this "!dps u"
+- type this once login : "!dps u"
 
 ## Commands
 
 - dps u (ui)
 - dps h (history)
-- dps c (current)
 - dps nd 1000000

@@ -419,7 +419,7 @@ module.exports = function DPS(d) {
 
   function membersDps(targetId)
   {
-    var newLine = '\n</br></br>'
+    var newLine = '\n'
     var endtime = 0
     var dpsmsg = newLine
     var bossIndex = -1
@@ -455,6 +455,7 @@ module.exports = function DPS(d) {
 
     //log(bosses[bossIndex].partydamage + ' : ' +totalPartyDamage.toString())
 
+    dpsmsg += '<table>'
     for(i in party){
       if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
       tdamage = Long.fromString(party[i].damage)
@@ -466,10 +467,11 @@ module.exports = function DPS(d) {
       dps = (tdamage.div(battleduration).toNumber()/1000).toFixed(1)
       dps = numberWithCommas(dps)
 
-      dpsmsg += cname + ' ' + dps + 'k/s '.clr('E69F00')
-      + tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00')
-      + cdamage.shr(10).multiply(1000).div(tdamage.shr(10)).toNumber()/10  + '% '.clr('E69F00') + newLine
+      dpsmsg += '<tr><td>' + cname + '</td><td> ' + dps + 'k/s '.clr('E69F00') + '</td>'
+      + '<td>' + tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00') + '</td>'
+      + '<td>' + cdamage.shr(10).multiply(1000).div(tdamage.shr(10)).toNumber()/10  + '% '.clr('E69F00') + '</td></tr>'+ newLine
     }
+    dpsmsg += '</table>'
     lastDps = dpsmsg
     return dpsmsg
   }
