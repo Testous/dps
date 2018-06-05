@@ -1,15 +1,13 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-ff69b4.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=C6BU555NMQJD6)
-Donation link for the origin repository developer.
+Donation.
 
 ![DPS](https://preview.ibb.co/n7X8f8/dps.jpg)
 
 ## Introduction
 
-This is proxy based Tera dps meter upgraded version of my-dps.
-Check party members dps
+Tera DPS meter.
+Targeting less cpu/memory resources.
 Enraged notifies in real time by notice message size as like picture.
-Try to keep your damage over %25 in five party.
-
 
 ## Prerequisite
 
@@ -20,17 +18,18 @@ Try to keep your damage over %25 in five party.
 ## Install
 
 1. Download the modules([ui](https://github.com/pinkipi/ui),dps) via clicking in the button `Clone or Download` and then on `Download Zip`.
-2. Uncompress [ui](https://github.com/pinkipi/ui) and place the resulting folder in `Tera-proxy\bin\node_modules\ui`
-   go to : cd Tera-proxy\bin\node_modules\ui\
-   install express: npm i express   
-3. Uncompress dpsmeter and place the resulting folder in `Tera-proxy\bin\node_modules\dps` and you're set.
+2. Uncompress [ui](https://github.com/pinkipi/ui) and
+   place the resulting folder in `Tera-proxy\bin\node_modules\ui`
+   cmd> cd Tera-proxy\bin\node_modules\ui\
+   cmd> install express: npm i express   
+3. Uncompress dps and place the resulting folder in `Tera-proxy\bin\node_modules\dps` and you're set.
 
 ## Usage
 
-- type this once login : "!dps u"
+- type this once login : "!dps u" or it pops up automatically when you spawn in dungeon.
 
 ## Commands
 
 - dps u (ui)
-- dps h (history)
-- dps nd 1000000
+- dps h (history) : check proxy channel
+- dps nd 1000000 : if you want to spam notification, make it lower

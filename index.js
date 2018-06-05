@@ -79,6 +79,7 @@ module.exports = function DPS(d) {
     currentbossId = ''
     bosses = []
     NPCs = []
+    ui.open()
   })
 
   function putMeInParty()

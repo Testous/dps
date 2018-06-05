@@ -1,9 +1,9 @@
 {
   "files": {
-    "config.json": {"overwrite": false, "hash": "cbf3e7e1cd492d061e002b822723276bf6ee795a9de5e2c820ca75e15b901ed4"},
-    "index.js": "b69f9478aeec413238cf78585edf6dff9724ee3a3fb1b3dfc06aa845026f6259",
+    "config.json": "2a895b953e938b06234d7f5658a3b4b260f787ff58933ab4bc1635751793b7a3",
+    "index.js": "ae546574a730ea57a8cf15af6e5c1dd87153909dfcaa06e0d3eb796352efc4d9",
     "logger.js": "3488d2c4d7b15a99f054e712b31752e26b3edab54bedfbaec94c981b3e6cf17d",
-    "README.md": "baf0c7bc862ca9f976aa1dc13d229fd0a2859d65947591e43f581070b0ebd0eb",
+    "README.md": "4ddf10a4282540382f35cab66bc4db2e46bb25870b4c6cc0aa98446f39660b0c",
     "monsters/monsters-EU-EN.xml": "f41f57e3243545383d028c92ae3ff67ecfb8062b1602d50edfabf2969df924e6",
     "monsters/monsters-EU-FR.xml": "a9a9141cba083dd6df92518a648699aa3f5e4508d109cdcd12926c2166619ab9",
     "monsters/monsters-EU-GER.xml": "e2dd52983d26e54207691b5cbbf3a29fc395abc7310b58a00951778edc3f76b3",
@@ -20,6 +20,7 @@
   },
   "defs": {
     "S_LOGIN": 10,
+    "S_SPAWN_ME" : 2,
     "S_LOAD_TOPO": 3,
     "S_BOSS_GAGE_INFO": 3,
     "S_SPAWN_NPC": 8,
