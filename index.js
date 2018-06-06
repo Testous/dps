@@ -282,29 +282,32 @@ module.exports = function DPS(d) {
     }
 
     var zone,mon
-
-    if(gmonsterId[monsterId] == 'undefined' || gmonsterId[monsterId] == null) {
-
-      if(gzoneId[zoneId] == 'undefined' || gzoneId[zoneId] == null){
-        zone = doc.getElementsByTagName("Zone")
-        for(i in zone)
+  try{
+      if(gmonsterId[monsterId] == 'undefined' || gmonsterId[monsterId] == null) {
+        gmonsterId[monsterId] = 'UNKNOWN'
+        //if(gzoneId[zoneId] == 'undefined' || gzoneId[zoneId] == null){
+          gzoneId[zoneId] = 'UNKNOWN'
+          zone = doc.getElementsByTagName("Zone")
+          for(i in zone)
+          {
+            if(zone[i].getAttribute("id") == zoneId) {
+              gzoneId[zoneId] = zone[i].getAttribute("name")
+              break
+            }
+          }
+        //}
+        mon = zone[i].getElementsByTagName("Monster")
+        for(j in mon)
         {
-          if(zone[i].getAttribute("id") == zoneId) {
-            gzoneId[zoneId] = zone[i].getAttribute("name")
+          if(mon[j].getAttribute("id") == monsterId) {
+            gmonsterId[monsterId] = mon[j].getAttribute("name")
             break
           }
-          gzoneId[zoneId] = 'UNKNOWN'
         }
       }
-      mon = zone[i].getElementsByTagName("Monster")
-      for(j in mon)
-      {
-        if(mon[j].getAttribute("id") == monsterId) {
-          gmonsterId[monsterId] = mon[j].getAttribute("name")
-          break
-        }
-        gmonsterId[monsterId] = 'UNKNOWN'
-      }
+    }
+    catch(err){
+      log('ERROR : ' + err + ' monsterId:zoneId' + monsterId + zoneId)
     }
     return gmonsterId[monsterId] + ':' +gzoneId[zoneId]
   }
