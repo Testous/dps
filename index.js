@@ -254,8 +254,8 @@ module.exports = function DPS(d) {
       addMemberDamage(sourceId,target,e.damage.toString(),e.crit)
       if(mygId.localeCompare(sourceId) == 0 && e.damage.gt(notice_damage)) {
         toNotice(myDps(memberIndex,e.damage,target))
-        e.damage=0
-        return true
+        //e.damage=0
+        //return true
       }
     }
 
