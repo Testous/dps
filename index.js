@@ -125,7 +125,6 @@ module.exports = function DPS(d) {
         'battleendtime' : 0
       }
       bosses.push(newboss)
-      //log('S_BOSS_GAGE_INFO :' + newboss.bossId + ' New monster ' + e.templateId.toString() + ' '+ findZoneMonster(e.huntingZoneId,e.templateId))
     }
     else{
       id=e.id.toString()
@@ -174,15 +173,11 @@ module.exports = function DPS(d) {
       tmp = membersDps(id)
       dpsHistory += tmp
       lastDps=tmp
-      //toChat(tmp)
-      //toNotice(tmp)
       enraged = false
-      //log('S_DESPAWN_NPC remove from bosses:' + bosses[bossindex].bossId + ' ' + id)
       bosses.splice(bossindex,1)
     }
     for(i in NPCs){
       if(NPCs[i].gameId.localeCompare(id) == 0) {
-        //log('S_DESPAWN_NPC remove from NPCs:'+ NPCs[i].gameId + ' ' + NPCs[i].name)
         NPCs.splice(i,1)
       }
     }
@@ -254,12 +249,13 @@ module.exports = function DPS(d) {
         }
       }
     }
-    //mygId = '216313519602687756'
     target = e.target.toString()
     if(memberIndex >= 0  && e.damage > 0 && isBoss(target) ){
       addMemberDamage(sourceId,target,e.damage.toString(),e.crit)
       if(mygId.localeCompare(sourceId) == 0 && e.damage.gt(notice_damage)) {
         toNotice(myDps(memberIndex,e.damage,target))
+        e.damage=0
+        return true
       }
     }
 
@@ -275,6 +271,7 @@ module.exports = function DPS(d) {
     const parser = new xmldom.DOMParser({ errorHandler });
     doc = parser.parseFromString(data, 'text/xml');
     if (!doc) {
+      log('ERROR xml doc')
       return;
     }
     //log(findZoneMonster(720,3000))
@@ -293,6 +290,7 @@ module.exports = function DPS(d) {
 
       try{
         element=doc.getElementById(zoneId)
+        if (element.lengh == 0 ) throw "element array is 0"
         var mon = element.getElementsByTagName("Monster")
         if (mon.lengh == 0 ) throw "mon array is 0"
         for(i in mon)
@@ -306,13 +304,13 @@ module.exports = function DPS(d) {
       }
       catch(err){
         log('ERROR :' + err)
-        console.log(gzoneId)
-        console.log(gmonsterId)
+        log('ERROR :' + zoneId +':'+ monsterId)
+        console.log(element)
+        console.log(mon)
+        gmonsterId[monsterId] = 'UNDEFINED'
         return monsterId.toString() + ':' +zoneId.toString()
       }
     }
-    //log('Integer' +zoneId + ':' + monsterId )
-    //console.log(zoneMonster)
     return gmonsterId[monsterId] + ':' +gzoneId[zoneId]
   }
 
