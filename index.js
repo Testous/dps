@@ -60,6 +60,21 @@ module.exports = function DPS(d) {
   ui.get('/api/R', (req, res) => {
     res.status(200).json(membersDps(currentbossId));
   })
+  ui.get('/api/H', (req, res) => {
+    toChat(dpsHistory)
+    toNotice(dpsHistory)
+    res.status(200).json();
+  })
+  ui.get('/api/N', (req, res) => {
+    notice = !notice
+    send(`Notice to screen ${notice ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
+    res.status(200).json();
+  })
+  ui.get('/api/D', (req, res) => {
+    //notice_damage=
+    res.status(200).json();
+  })
+
 
   d.hook('S_LOGIN',10, (e) => {
     mygId=e.gameId.toString()
@@ -438,7 +453,7 @@ module.exports = function DPS(d) {
     var seconds = Math.floor(battleduration % 60)
 
     dpsmsg = findZoneMonster(bosses[bossIndex].huntingZoneId,bosses[bossIndex].templateId)  + ' ' + minutes + ':' + seconds + newLine
-    dpsmsg = dpsmsg.clr('E69F00')
+    dpsmsg = dpsmsg.clr('E69F00') + '</br>'
 
     party.sort(function(a,b) {return (Number(a.damage) < Number(b.damage)) ? 1 : ((Number(b.damage) < Number(a.damage)) ? -1 : 0);} );
 
@@ -452,7 +467,7 @@ module.exports = function DPS(d) {
 
     //log(bosses[bossIndex].partydamage + ' : ' +totalPartyDamage.toString())
 
-    dpsmsg += '<table>'
+    dpsmsg += '<table><tr><td>Name</td><td>DPS (dmg)</td><th>DPS (%)</td><td>Crit</td></tr>'
     for(i in party){
       if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
       tdamage = Long.fromString(party[i].damage)

@@ -18,12 +18,23 @@
 		document.getElementById("content").innerHTML = this.responseText.replace(/(\\n|\"|\\)/gm,"");
 	}
 
+	function HistoryCB() {}
+	function History() {
+		xhr("H",HistoryCB)
+	}
+	function NoticeCB() {}
+	function Notice() {
+		xhr("N",NoticeCB)
+	}
+	function NoticeDamage() {
+		xhr("D",NoticeDamageCB)
+	}
 	window.addEventListener('error', function(e) {
 		_tera_client_proxy_.alert('Error: ' + e.message)
 	})
 
 	window.onload = function() {
-		_tera_client_proxy_.resize_to(300, 150)
+		_tera_client_proxy_.resize_to(300, 200)
 		_tera_client_proxy_.set_title('DPS')
 
 		var counter = 0;
@@ -38,9 +49,16 @@
 		}, 1000);
 
 	}
+
+
 	</script>
 </head>
 <body>
-	<div  id="content" width=300 height=150></div >
+	<div  id="content" width=300 height=200></div >
+	</br>
+		<button type="button" id="H" onclick="History()">H</button>
+		<button type="button" id="N" onclick="Notice()">N</button>
+		<input type="text" id="NDV" value="">
+		<button type="button" id="ND" onclick="NoticeDamage()">ND</button>
 </body>
 </html>

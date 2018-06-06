@@ -18,10 +18,15 @@ Enraged notifies in real time by notice message size as like picture.
 ## Install
 
 1. Download the modules([ui](https://github.com/pinkipi/ui),dps) via clicking in the button `Clone or Download` and then on `Download Zip`.
+
 2. Uncompress [ui](https://github.com/pinkipi/ui) and
+
    place the resulting folder in `Tera-proxy\bin\node_modules\ui`
+
    cmd> cd Tera-proxy\bin\node_modules\ui\
+   
    cmd> install express: npm i express   
+
 3. Uncompress dps and place the resulting folder in `Tera-proxy\bin\node_modules\dps` and you're set.
 
 ## Usage
