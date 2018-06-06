@@ -16,7 +16,7 @@
     "monsters/monsters-THA.xml": "7862b1b4a38cde8d97f519f49a185c7045dba9ee2152325f9d3bca1b56f439e0",
     "monsters/monsters-TW.xml": "4dd9a9a8cee775105f01380fede80f4d666102e04c4507e4f6f7b1ca565a43e1",
     "ui/index.html": "d5c90a3424b95bb09a7c5db82ce5da3056dc284ea8a0b10333bb71ae1d650cba",
-    "ui/main.css": "b82b7b3e99f97a42f21a60309e97e581683d34a251a91228c12c1ea786aa745a"
+    "ui/main.css": "ee8608a7996dbe47c89f75335c4c6e4dacfee7a46c51818c27d55d4cea177eff"
   },
   "defs": {
     "S_LOGIN": 10,

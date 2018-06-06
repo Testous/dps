@@ -22,3 +22,6 @@ table ,td, tr{
   text-align: right;
   padding : 3;
 }
+div {
+    overflow-y: auto;
+}
