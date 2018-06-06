@@ -52,15 +52,12 @@ module.exports = function DPS(d) {
   partydamage = new Long(0,0),
   missingDamage = new Long(0,0),
   enraged = false
+
   var filename = path.join(__dirname, '/monsters/monsters-'+ region + '.xml')
   var doc = null
   const ui = UI(d)
-  var counter = 0
-
   ui.use(UI.static(__dirname + '/ui'))
-
   ui.get('/api/R', (req, res) => {
-    counter++
     res.status(200).json(membersDps(currentbossId));
   })
 
@@ -280,35 +277,33 @@ module.exports = function DPS(d) {
   function findZoneMonster(zoneId,monsterId)
   {
     if(!Number.isInteger(zoneId) || !Number.isInteger(monsterId)){
-      log('no Integer' +zoneId + ':' + monsterId )
+      console.log('no Integer' +zoneId + ':' + monsterId )
       return ''
     }
 
-    if(gzoneId[zoneId] == 'undefined' || gzoneId[zoneId] == null) gzoneId[zoneId] = doc.getElementById(zoneId).getAttribute("name")
+    var zone,mon
 
     if(gmonsterId[monsterId] == 'undefined' || gmonsterId[monsterId] == null) {
 
-      try{
-        element=doc.getElementById(zoneId)
-        if (element.lengh == 0 ) throw "element array is 0"
-        var mon = element.getElementsByTagName("Monster")
-        if (mon.lengh == 0 ) throw "mon array is 0"
-        for(i in mon)
+      if(gzoneId[zoneId] == 'undefined' || gzoneId[zoneId] == null){
+        zone = doc.getElementsByTagName("Zone")
+        for(i in zone)
         {
-          if(mon[i].getAttribute("id") == monsterId) {
-            //console.log(mon[i].getAttribute("name"))
-            gmonsterId[monsterId] = mon[i].getAttribute("name")
+          if(zone[i].getAttribute("id") == zoneId) {
+            gzoneId[zoneId] = zone[i].getAttribute("name")
             break
           }
+          gzoneId[zoneId] = 'UNKNOWN'
         }
       }
-      catch(err){
-        log('ERROR :' + err)
-        log('ERROR :' + zoneId +':'+ monsterId)
-        console.log(element)
-        console.log(mon)
-        gmonsterId[monsterId] = 'UNDEFINED'
-        return monsterId.toString() + ':' +zoneId.toString()
+      mon = zone[i].getElementsByTagName("Monster")
+      for(j in mon)
+      {
+        if(mon[j].getAttribute("id") == monsterId) {
+          gmonsterId[monsterId] = mon[j].getAttribute("name")
+          break
+        }
+        gmonsterId[monsterId] = 'UNKNOWN'
       }
     }
     return gmonsterId[monsterId] + ':' +gzoneId[zoneId]
