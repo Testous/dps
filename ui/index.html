@@ -26,9 +26,26 @@
 	function Notice() {
 		xhr("N",NoticeCB)
 	}
-	function NoticeDamage() {
-		xhr("D",NoticeDamageCB)
+
+	function NoticeDamageCB() {
+		document.getElementById("NDV").value = this.responseText.replace(/(\")/gm,"");
 	}
+
+	function NoticeDamage() {
+		xhr(document.getElementById("NDV").value + "D",NoticeDamageCB)
+	}
+
+	function validate(evt) {
+  var theEvent = evt || window.event;
+  var key = theEvent.keyCode || theEvent.which;
+  key = String.fromCharCode( key );
+  var regex = /[0-9]|\./;
+  if( !regex.test(key) ) {
+    theEvent.returnValue = false;
+    if(theEvent.preventDefault) theEvent.preventDefault();
+  }
+}
+
 	window.addEventListener('error', function(e) {
 		_tera_client_proxy_.alert('Error: ' + e.message)
 	})
@@ -58,7 +75,7 @@
 	</br>
 		<button type="button" id="H" onclick="History()">H</button>
 		<button type="button" id="N" onclick="Notice()">N</button>
-		<input type="text" id="NDV" value="">
+		<input type="text" id="NDV" onkeypress='validate(event)' value="">
 		<button type="button" id="ND" onclick="NoticeDamage()">ND</button>
 </body>
 </html>

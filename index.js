@@ -27,7 +27,7 @@ const errorHandler = {
   },
 };
 
-module.exports = function DPS(d) {
+module.exports = function DPS(d,ctx) {
 
   const command = Command(d)
 
@@ -57,23 +57,40 @@ module.exports = function DPS(d) {
   var doc = null
   const ui = UI(d)
   ui.use(UI.static(__dirname + '/ui'))
-  ui.get('/api/R', (req, res) => {
-    res.status(200).json(membersDps(currentbossId));
-  })
-  ui.get('/api/H', (req, res) => {
-    toChat(dpsHistory)
-    toNotice(dpsHistory)
-    res.status(200).json();
-  })
-  ui.get('/api/N', (req, res) => {
-    notice = !notice
-    send(`Notice to screen ${notice ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
-    res.status(200).json();
-  })
-  ui.get('/api/D', (req, res) => {
-    //notice_damage=
-    res.status(200).json();
-  })
+
+  const paramRegex = /(\d*)(\D*)/;
+
+  function getData(param) {
+    const data = param.match(paramRegex);
+    data.shift();
+    return data;
+  }
+
+  function api(req, res) {
+    //console.log(req.params)
+    const api = getData(req.params[0]);
+    switch(api[1]) {
+     case "R":
+     return res.status(200).json(membersDps(currentbossId));
+     case "H":
+     toChat(dpsHistory)
+     toNotice(dpsHistory)
+     return res.status(200).json("ok");
+     case "N":
+     notice = !notice
+     send(`Notice to screen ${notice ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
+     return res.status(200).json("ok");
+     case "D":
+     //console.log(api)
+     notice_damage = Number(api[0])
+     send('Notice damage is ' + notice_damage)
+     return res.status(200).json(notice_damage.toString());
+     default:
+      return res.status(404).send("404");
+    }
+  }
+
+  ui.get(`/api/*`, api.bind(ctx));
 
 
   d.hook('S_LOGIN',10, (e) => {
@@ -467,7 +484,7 @@ module.exports = function DPS(d) {
 
     //log(bosses[bossIndex].partydamage + ' : ' +totalPartyDamage.toString())
 
-    dpsmsg += '<table><tr><td>Name</td><td>DPS (dmg)</td><th>DPS (%)</td><td>Crit</td></tr>'
+    dpsmsg += '<table><tr><td>Name</td><td>DPS (dmg)</td><th>DPS (%)</td><td>Crit</td></tr>' + newLine
     for(i in party){
       if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
       tdamage = Long.fromString(party[i].damage)

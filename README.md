@@ -6,8 +6,10 @@ Donation.
 ## Introduction
 
 Tera DPS meter.(only for boss monster)
+
 Targeting less cpu/memory resources.
-Enraged notifies in real time by notice message size as like picture.
+
+Enraged notifies in real time by notice message size as like the above picture.
 
 ## Prerequisite
 
@@ -31,10 +33,4 @@ Enraged notifies in real time by notice message size as like picture.
 
 ## Usage
 
-- type this once login : "!dps u" or it pops up automatically when you spawn in dungeon.
-
-## Commands
-
-- dps u (ui)
-- dps h (history) : check proxy channel
-- dps nd 1000000 : if you want to spam notification, make it lower
+- It pops up automatically when you spawn in a dungeon or type "!dps u"
