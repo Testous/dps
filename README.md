@@ -1,5 +1,5 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-ff69b4.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=C6BU555NMQJD6)
-Donation.
+Bluehole or Nexon recommand to donate here.
 
 ![DPS](https://preview.ibb.co/n7X8f8/dps.jpg)
 
@@ -36,3 +36,7 @@ Notice damage as like the above picture.
 ## Usage
 
 - It pops up automatically when you spawn in a dungeon or type "!dps u"
+
+## Online Support
+
+[discord](https://discord.gg/XsTscwZ)

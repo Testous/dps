@@ -49,7 +49,7 @@ module.exports = function DPS(d,ctx) {
   dpsHistory = '',
   lastDps= '',
   currentbossId = '',
-  partydamage = new Long(0,0),
+  subHp = new Long(0,0),
   missingDamage = new Long(0,0),
   enraged = false,
   estatus = '',
@@ -151,7 +151,7 @@ module.exports = function DPS(d,ctx) {
     // notified boss before battle
     hpMax = e.maxHp
     hpCur = e.curHp
-    partydamage = e.maxHp.sub(e.curHp) // Long
+    subHp = e.maxHp.sub(e.curHp) // Long
     hpPer = Math.floor((hpCur / hpMax) * 100)
     nextEnrage = (hpPer > 10) ? (hpPer - 10) : 0
 
@@ -164,7 +164,7 @@ module.exports = function DPS(d,ctx) {
         'templateId' : e.templateId,
         'curHp' : e.maxHp.toString(),
         'maxHp' : e.curHp.toString(),
-        'partydamage' : partydamage.toString(),
+        'subHp' : subHp.toString(),
         'battlestarttime' : 0,
         'battleendtime' : 0
       }
@@ -177,7 +177,7 @@ module.exports = function DPS(d,ctx) {
         {
           bosses[i].curHp = e.maxHp.toString()
           bosses[i].maxHp = e.curHp.toString()
-          bosses[i].partydamage = partydamage.toString()
+          bosses[i].subHp = subHp.toString()
         }
       }
     }
@@ -375,7 +375,7 @@ module.exports = function DPS(d,ctx) {
   function getBosspartyDamage(id)
   {
     for(i in bosses){
-      if(id.localeCompare(bosses[i].bossId) == 0) return bosses[i].partydamage
+      if(id.localeCompare(bosses[i].bossId) == 0) return bosses[i].subHp
     }
     log('getBosspartyDamage Error')
     return '0'
@@ -496,6 +496,8 @@ module.exports = function DPS(d,ctx) {
       if( battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
         totalPartyDamage = totalPartyDamage.add(party[i].damage)
     }
+
+    log('total damage:sub Hp ' + totalPartyDamage + ':' + subHp)
 
     dpsmsg += '<table><tr><td>Name</td><td>DPS (dmg)</td><th>DPS (%)</td><td>Crit</td></tr>' + newLine
     for(i in party){
