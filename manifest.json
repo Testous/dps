@@ -1,7 +1,7 @@
 {
   "files": {
     "config.json": "2a895b953e938b06234d7f5658a3b4b260f787ff58933ab4bc1635751793b7a3",
-    "index.js": "c6831b2a880b63654620de0d0161746d95b55dd4e195d8d62d204c72cdf0af3f",
+    "index.js": "1ffab555f304af477caf348f6bf24951fe595516e1bae416baef3ff21e5a2de2",
     "logger.js": "cae4592cf571e069b9ee61e3dc2ae2c21895133509dee5ab85a77b072e636861",
     "README.md": "1ec39bf2568f80f6a19cbf44cb93f8674599888f42a8506b643979c439eccabd",
     "monsters/monsters-EU-FR.xml": "94dbdbdb17ef9832a22c3c8fef3390291931c97a91b6403680fb4a5a6ec350e8",
@@ -15,7 +15,7 @@
     "monsters/monsters-RU.xml": "4ca3f0f3b086d698b4b7414d07723edc3f1082278f90b46bb798b7113ab7579d",
     "monsters/monsters-THA.xml": "1719de8f1e1a2549bb79fcaaa0939feb7cf39c7ea67c48bef3f5263e7eddc7be",
     "monsters/monsters-TW.xml": "95243e235bc4eb967b182f9a4f3a9072769a7d6fe0b19255390123d1043b82f9",
-    "ui/index.html": "dc2af53704e163cb9e57b1ad830ab189b1d68d2b7257457e35fc4e701411fa49",
+    "ui/index.html": "d6ce9857750e4d91221cd59d4c0ec99e20bea9a31e02a9fc0971a97977abbedb",
     "ui/main.css": "ee8608a7996dbe47c89f75335c4c6e4dacfee7a46c51818c27d55d4cea177eff"
   },
   "defs": {

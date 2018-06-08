@@ -85,6 +85,12 @@ module.exports = function DPS(d,ctx) {
      notice_damage = Number(api[0])
      send('Notice damage is ' + notice_damage)
      return res.status(200).json(notice_damage.toString());
+     case "A":
+     //console.log(api)
+     notice_damage += notice_damage
+     if(notice_damage > 20000000) notice_damage = 1000000
+     send('Notice damage is ' + notice_damage)
+     return res.status(200).json(notice_damage.toString());
      default:
       return res.status(404).send("404");
     }
@@ -249,7 +255,7 @@ module.exports = function DPS(d,ctx) {
         'class' : member.class.toString(),
         'targetId'  :  'NONE',
         'hit' : 0,
-        'crit' : 0,        
+        'crit' : 0,
         'damage'  :  'NONE',
         'critDamage' : 'NONE'
       }

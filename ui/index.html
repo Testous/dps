@@ -35,6 +35,10 @@
 		xhr(document.getElementById("NDV").value + "D",NoticeDamageCB)
 	}
 
+	function NoticeDamageAdd() {
+		xhr("A",NoticeDamageCB)
+	}
+
 	function validate(evt) {
   var theEvent = evt || window.event;
   var key = theEvent.keyCode || theEvent.which;
@@ -77,5 +81,6 @@
 		<button type="button" id="N" onclick="Notice()">N</button>
 		<input type="text" id="NDV" onkeypress='validate(event)' value="">
 		<button type="button" id="ND" onclick="NoticeDamage()">ND</button>
+		<button type="button" id="A" onclick="NoticeDamageAdd()">ADD</button>
 </body>
 </html>
