@@ -491,8 +491,9 @@ module.exports = function DPS(d,ctx) {
     var minutes = Math.floor(battleduration / 60)
     var seconds = Math.floor(battleduration % 60)
 
-    dpsmsg = findZoneMonster(bosses[bossIndex].huntingZoneId,bosses[bossIndex].templateId)  + ' ' + minutes + ':' + seconds + newLine
-    dpsmsg = dpsmsg.clr('E69F00') + '</br>'
+    dpsmsg = findZoneMonster(bosses[bossIndex].huntingZoneId,bosses[bossIndex].templateId)  + ' ' + minutes + ':' + seconds + newLine + '</br>'
+    dpsmsg = `${enraged ? dpsmsg.clr('FF0000') : dpsmsg.clr('E69F00') }`
+
 
     party.sort(function(a,b) {return (Number(a.damage) < Number(b.damage)) ? 1 : ((Number(b.damage) < Number(a.damage)) ? -1 : 0);} );
 
