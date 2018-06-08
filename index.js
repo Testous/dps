@@ -456,7 +456,7 @@ module.exports = function DPS(d,ctx) {
           else party[i].critDamage = "0"
 
           party[i].hit = 1
-          if(crit) party[i].crit +=1
+          if(crit) party[i].crit =1
           else party[i].crit = 0
         }
       }
