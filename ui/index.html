@@ -27,6 +27,11 @@
 		xhr("N",NoticeCB)
 	}
 
+	function DebugCB() {}
+	function Debug() {
+		xhr("B",DebugCB)
+	}
+
 	function NoticeDamageCB() {
 		//document.getElementById("NDV").value = this.responseText.replace(/(\")/gm,"");
 	}
@@ -81,5 +86,6 @@
 		<!-- <input type="text" id="NDV" onkeypress='validate(event)' value="">
 		<button type="button" id="ND" onclick="NoticeDamage()">ND</button> -->
 		<button type="button" id="A" onclick="NoticeDamageAdd()">Notice value</button>
+		<button type="button" id="B" onclick="Debug()">Debug</button>
 </body>
 </html>

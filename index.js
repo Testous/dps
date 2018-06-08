@@ -69,7 +69,6 @@ module.exports = function DPS(d,ctx) {
   }
 
   function api(req, res) {
-    //console.log(req.params)
     const api = getData(req.params[0]);
     switch(api[1]) {
      case "R":
@@ -93,6 +92,10 @@ module.exports = function DPS(d,ctx) {
      if(notice_damage > 20000000) notice_damage = 1000000
      send('Notice damage is ' + numberWithCommas(notice_damage.toString()))
      return res.status(200).json(notice_damage.toString());
+     case "B":
+     debug = !debug
+     send(`Debug ${debug ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
+     return res.status(200).json("ok");
      default:
       return res.status(404).send("404");
     }
@@ -105,7 +108,6 @@ module.exports = function DPS(d,ctx) {
     mygId=e.gameId.toString()
     myplayerId=e.playerId.toString()
     myname=e.name.toString()
-    //log('gameId:' + mygId)
     party = []
     putMeInParty()
   })
@@ -153,6 +155,8 @@ module.exports = function DPS(d,ctx) {
     hpPer = Math.floor((hpCur / hpMax) * 100)
     nextEnrage = (hpPer > 10) ? (hpPer - 10) : 0
 
+    log(e)
+
     if(!isBoss(e.id.toString())){
       newboss = {
         'bossId' : e.id.toString(),
@@ -186,7 +190,6 @@ module.exports = function DPS(d,ctx) {
       'owner' : e.owner.toString(),
       'name' : e.npcName
     }
-    //log('S_SPAWN_NPC : '+ newNPC.name +' newNPC.gameId ' + newNPC.gameId +' newNPC.owner '+ newNPC.owner);
     NPCs.push(newNPC)
   })
 
@@ -196,7 +199,6 @@ module.exports = function DPS(d,ctx) {
     for( i in party )
     {
       if(party[i].gameId.localeCompare(gid) == 0 ) {
-        //log('isMemberPet ' + party[i].gameId + ' ' + gid)
         return true
       }
     }
@@ -265,7 +267,6 @@ module.exports = function DPS(d,ctx) {
         'critDamage' : 'NONE'
       }
       if(!isPartyMember(member.gameId.toString())) {
-        //log('S_PARTY_MEMBER_LIST :' + newmember.name)
         party.push(newmember)
       }
     })
@@ -287,7 +288,6 @@ module.exports = function DPS(d,ctx) {
       else{// pet
         petIndex=getMemberIndexOutofNPCBySid(e.source.toString(),e.owner.toString())
         if(petIndex >= 0) {
-          //log( 'NOT missgindamage SID :' + e.source.toString() + ' owner :' + e.owner.toString() +' damage :' + e.damage.toString() )
           memberIndex = petIndex
           sourceId = party[memberIndex].gameId
         }
@@ -318,7 +318,7 @@ module.exports = function DPS(d,ctx) {
       log('ERROR xml doc')
       return;
     }
-    //log(findZoneMonster(720,3000))
+    log(findZoneMonster(152,2003)) //학살의 사브라니악
   });
 
   function findZoneMonster(zoneId,monsterId)
@@ -391,10 +391,8 @@ module.exports = function DPS(d,ctx) {
 
   function getBossIndex(gId){
     for(i in bosses){
-      //log('getBossIndex ' + gId + ' ' + bosses[i].bossId )
       if(gId.localeCompare(bosses[i].bossId) == 0) return i
     }
-    //log('return -1')
     return -1
   }
 
@@ -402,7 +400,6 @@ module.exports = function DPS(d,ctx) {
   function getNpcName(bossId)
   {
     for(i in NPCs){
-      //log('getNpcName bossId ' + bossId + ' NPCs gameId' + NPCs[i].gameId + ' ' + NPCs[i].name)
       if(bossId.localeCompare(NPCs[i].gameId) == 0) return NPCs[i].name
     }
     return 'NONAME'
@@ -438,15 +435,12 @@ module.exports = function DPS(d,ctx) {
     if( bossindex >= 0 && bosses[bossindex].battlestarttime == 0){
       bosses[bossindex].battlestarttime = Date.now()
       currentbossId = target
-      //log('addMemberDamage' + id + ' ' + target + ' ' + damage)
     }
 
-    //tdamage = new Long.fromString(getPartyMemberDamage(id).toString())
     for(i in party){
       if(id.localeCompare(party[i].gameId) == 0) {
         if(party[i].targetId.localeCompare(target) == 0)
         {
-          //party[i].damage = tdamage.add(damage).toString()
           party[i].damage = Long.fromString(damage).add(party[i].damage).toString()
           if(crit) party[i].critDamage = Long.fromString(party[i].critDamage).add(damage).toString()
 
@@ -480,8 +474,6 @@ module.exports = function DPS(d,ctx) {
     bossIndex = getBossIndex(targetId)
     if(bossIndex < 0) return lastDps
 
-    //totalPartyDamage = Long.fromString(bosses[bossIndex].partydamage)
-
     if( bosses[bossIndex].battleendtime == 0) endtime=Date.now()
     else endtime=bosses[bossIndex].battleendtime
 
@@ -504,8 +496,6 @@ module.exports = function DPS(d,ctx) {
       if( battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
         totalPartyDamage = totalPartyDamage.add(party[i].damage)
     }
-
-    //log(bosses[bossIndex].partydamage + ' : ' +totalPartyDamage.toString())
 
     dpsmsg += '<table><tr><td>Name</td><td>DPS (dmg)</td><th>DPS (%)</td><td>Crit</td></tr>' + newLine
     for(i in party){
@@ -543,7 +533,6 @@ module.exports = function DPS(d,ctx) {
     var dps=0
 
     bossIndex = getBossIndex(targetId)
-    //totalPartyDamage = Long.fromString(bosses[bossIndex].partydamage)
 
     if( bosses[bossIndex].battleendtime == 0) endtime=Date.now()
     else endtime=bosses[bossIndex].battleendtime
@@ -558,11 +547,8 @@ module.exports = function DPS(d,ctx) {
     }
 
     if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0){
-      //log('totalPartyDamage 0 or battleduration :' + battleduration)
       return
     }
-
-    //log(bosses[bossIndex].partydamage + ' : ' +totalPartyDamage.toString())
 
     tdamage = Long.fromString(party[i].damage)
     dps = (tdamage.div(battleduration).toNumber()>>10).toFixed(1)
@@ -590,12 +576,8 @@ module.exports = function DPS(d,ctx) {
     })
   }
   function send(msg) { command.message(`[DPS] : ` + [...arguments].join('\n  - '.clr('FFFFFF'))) }
-  function status() { send(
-    `Enrage message : ${enable ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')}`,
-    `Notice to screen : ${notice ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')}`)
-  }
   function log(msg) {
-    if(debug) console.log(`[DPS] ${msg}`);
+    if(debug) console.log(msg);
   }
 
   // command
@@ -608,40 +590,24 @@ module.exports = function DPS(d,ctx) {
     else if (arg == 'u' || arg=='ui') {
       ui.open()
     }
-    else if (arg == 'c' || arg=='current') {
-      toChat(membersDps(currentbossId))
-    }
     else if (arg == 'nd' || arg=='notice_damage') {
       notice_damage = arg2
       toChat('notice_damage : ' + notice_damage);
     }
     else if (arg == 'h' || arg=='history') {
       toChat(dpsHistory)
-      //toNotice(dpsHistory)
     }
     else if (arg == 't' || arg=='test') {
-      d.toClient('S_DUNGEON_EVENT_MESSAGE', 1 , {
-        unk1: arg2, // 42 blue shiny text, 31 normal Text 70 FLASHING_NOTIFICATION
-        unk2: 0,
-        unk3: 27,
-        message: mygId + ' Test message! ' + arg2
-      })
-      for(i in NPCs){
-        log('LIST NPCs'+ NPCs[i].gameId + ' ' + NPCs[i].name)
-      }
     }
     // notice
     else if (arg === 'n' ||  arg === 'notice') {
       notice = !notice
       send(`Notice to screen ${notice ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
-      // status
-    } else if (arg === 's' || arg === 'status') status()
+    }
     else send(`Invalid argument.`.clr('FF0000') + ' dps or dps h/c/n/s or dps nd 1000000')
   })
 
   this.destructor = () => {
     command.remove('dps');
   };
-
-
 }
