@@ -1,6 +1,6 @@
 {
     "enable": true,
     "notice": true,
-    "notice_damage": 1000000,
+    "notice_damage": 5000000,
     "debug" : true
 }
