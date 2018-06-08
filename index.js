@@ -85,13 +85,13 @@ module.exports = function DPS(d,ctx) {
      case "D":
      //console.log(api)
      notice_damage = Number(api[0])
-     send('Notice damage is ' + notice_damage)
+     send('Notice damage is ' + numberWithCommas(notice_damage.toString()))
      return res.status(200).json(notice_damage.toString());
      case "A":
      //console.log(api)
      notice_damage += notice_damage
      if(notice_damage > 20000000) notice_damage = 1000000
-     send('Notice damage is ' + notice_damage)
+     send('Notice damage is ' + numberWithCommas(notice_damage.toString()))
      return res.status(200).json(notice_damage.toString());
      default:
       return res.status(404).send("404");
