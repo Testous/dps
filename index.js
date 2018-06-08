@@ -51,7 +51,9 @@ module.exports = function DPS(d,ctx) {
   currentbossId = '',
   partydamage = new Long(0,0),
   missingDamage = new Long(0,0),
-  enraged = false
+  enraged = false,
+  estatus = '',
+  nextEnrage = 0
 
   var filename = path.join(__dirname, '/monsters/monsters-'+ region + '.xml')
   var doc = null
@@ -71,10 +73,10 @@ module.exports = function DPS(d,ctx) {
     const api = getData(req.params[0]);
     switch(api[1]) {
      case "R":
-     return res.status(200).json(membersDps(currentbossId));
+     return res.status(200).json(membersDps(currentbossId) + estatus);
      case "H":
      toChat(dpsHistory)
-     toNotice(dpsHistory)
+     //toNotice(dpsHistory)
      return res.status(200).json("ok");
      case "N":
      notice = !notice
@@ -149,6 +151,7 @@ module.exports = function DPS(d,ctx) {
     hpCur = e.curHp
     partydamage = e.maxHp.sub(e.curHp) // Long
     hpPer = Math.floor((hpCur / hpMax) * 100)
+    nextEnrage = (hpPer > 10) ? (hpPer - 10) : 0
 
     if(!isBoss(e.id.toString())){
       newboss = {
@@ -226,9 +229,11 @@ module.exports = function DPS(d,ctx) {
     if(!isBoss(e.creature.toString())) return
     if (e.enraged === 1 && !enraged) {
       enraged = true
+      estatus = 'Boss Enraged'.clr('FF0000')
     } else if (e.enraged === 0 && enraged) {
       if (hpPer === 100) return
       enraged = false
+      estatus = 'Next enraged at ' + nextEnrage + '%'
     }
   })
 
@@ -577,7 +582,7 @@ module.exports = function DPS(d,ctx) {
 
   function toNotice(msg) {
     if (notice) d.toClient('S_DUNGEON_EVENT_MESSAGE',1, {
-      unk1: enraged? 42 : 48,
+      unk1: 42,
       unk2: 0,
       unk3: 27,
       message: msg
@@ -611,7 +616,7 @@ module.exports = function DPS(d,ctx) {
     }
     else if (arg == 'h' || arg=='history') {
       toChat(dpsHistory)
-      toNotice(dpsHistory)
+      //toNotice(dpsHistory)
     }
     else if (arg == 't' || arg=='test') {
       d.toClient('S_DUNGEON_EVENT_MESSAGE', 1 , {

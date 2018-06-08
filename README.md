@@ -9,7 +9,9 @@ Tera DPS meter.(only for boss monster)
 
 Targeting less cpu/memory resources.
 
-Enraged notifies in real time by notice message size as like the above picture.
+Enraged notifies in real time.
+
+Notice damage as like the above picture.
 
 ## Prerequisite
 

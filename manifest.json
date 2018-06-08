@@ -1,9 +1,9 @@
 {
   "files": {
     "config.json": "2a895b953e938b06234d7f5658a3b4b260f787ff58933ab4bc1635751793b7a3",
-    "index.js": "0976d32ea0b8d0cfdc09b30ca38bb74775e23d18e72607dc5feeff71a50d1235",
+    "index.js": "95481782db2b047615440520f10caf1ffac227dc013de279dd988d0fd96f5046",
     "logger.js": "cae4592cf571e069b9ee61e3dc2ae2c21895133509dee5ab85a77b072e636861",
-    "README.md": "1ec39bf2568f80f6a19cbf44cb93f8674599888f42a8506b643979c439eccabd",
+    "README.md": "36ffc76b1756d49b1e32e24387e3ac4407757e03242de91e6956948cfb4b24d5",
     "monsters/monsters-EU-FR.xml": "94dbdbdb17ef9832a22c3c8fef3390291931c97a91b6403680fb4a5a6ec350e8",
     "monsters/monsters-EU-GER.xml": "3ceed53e2f2e6e5d2a0d6e33aa4574aabb1854d7347285faf4dc389dcce8d53a",
     "monsters/monsters-EU.xml": "e1577fd01e6783dfc7b02c84691bb3311200d9608428e9940af6e7d9ab121edc",
@@ -15,7 +15,7 @@
     "monsters/monsters-RU.xml": "4ca3f0f3b086d698b4b7414d07723edc3f1082278f90b46bb798b7113ab7579d",
     "monsters/monsters-THA.xml": "1719de8f1e1a2549bb79fcaaa0939feb7cf39c7ea67c48bef3f5263e7eddc7be",
     "monsters/monsters-TW.xml": "95243e235bc4eb967b182f9a4f3a9072769a7d6fe0b19255390123d1043b82f9",
-    "ui/index.html": "d6ce9857750e4d91221cd59d4c0ec99e20bea9a31e02a9fc0971a97977abbedb",
+    "ui/index.html": "92f92f5a57d5f923a049b18d6f836a0a595e9e93778f55d4ce0bb8ba34997e36",
     "ui/main.css": "ee8608a7996dbe47c89f75335c4c6e4dacfee7a46c51818c27d55d4cea177eff"
   },
   "defs": {

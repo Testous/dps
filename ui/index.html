@@ -28,7 +28,7 @@
 	}
 
 	function NoticeDamageCB() {
-		document.getElementById("NDV").value = this.responseText.replace(/(\")/gm,"");
+		//document.getElementById("NDV").value = this.responseText.replace(/(\")/gm,"");
 	}
 
 	function NoticeDamage() {
@@ -76,11 +76,10 @@
 </head>
 <body>
 	<div  id="content" width=300 height=200></div >
-	</br>
-		<button type="button" id="H" onclick="History()">H</button>
-		<button type="button" id="N" onclick="Notice()">N</button>
-		<input type="text" id="NDV" onkeypress='validate(event)' value="">
-		<button type="button" id="ND" onclick="NoticeDamage()">ND</button>
-		<button type="button" id="A" onclick="NoticeDamageAdd()">ADD</button>
+		<button type="button" id="H" onclick="History()">History</button>
+		<button type="button" id="N" onclick="Notice()">Notice</button>
+		<!-- <input type="text" id="NDV" onkeypress='validate(event)' value="">
+		<button type="button" id="ND" onclick="NoticeDamage()">ND</button> -->
+		<button type="button" id="A" onclick="NoticeDamageAdd()">Notice value</button>
 </body>
 </html>
