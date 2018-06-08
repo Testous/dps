@@ -119,6 +119,8 @@ module.exports = function DPS(d,ctx) {
       'name' : myname,
       'class' : '',
       'targetId'  :  'NONE',
+      'hit' : 0,
+      'crit' : 0,
       'damage'  :  'NONE',
       'critDamage' : 'NONE'
     }
@@ -434,6 +436,9 @@ module.exports = function DPS(d,ctx) {
           //party[i].damage = tdamage.add(damage).toString()
           party[i].damage = Long.fromString(damage).add(party[i].damage).toString()
           if(crit) party[i].critDamage = Long.fromString(party[i].critDamage).add(damage).toString()
+
+          party[i].hit += 1
+          if(crit) party[i].crit +=1
         }
         else{ // new monster
           party[i].battlestarttime = Date.now()
@@ -441,6 +446,10 @@ module.exports = function DPS(d,ctx) {
           party[i].damage = damage
           if(crit) party[i].critDamage = damage
           else party[i].critDamage = "0"
+
+          party[i].hit = 1
+          if(crit) party[i].crit +=1
+          else party[i].crit = 0
         }
       }
     }
@@ -496,9 +505,13 @@ module.exports = function DPS(d,ctx) {
       dps = (tdamage.div(battleduration).toNumber()/1000).toFixed(1)
       dps = numberWithCommas(dps)
 
+      if(party[i].crit == 0 || party[i].hit == 0) crit = 0
+      else crit = Math.floor(party[i].crit * 100 / party[i].hit)
+
       dpsmsg += '<tr><td>' + cname + '</td><td> ' + dps + 'k/s '.clr('E69F00') + '</td>'
       + '<td>' + tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00') + '</td>'
-      + '<td>' + cdamage.shr(10).multiply(1000).div(tdamage.shr(10)).toNumber()/10  + '% '.clr('E69F00') + '</td></tr>'+ newLine
+      //+ '<td>' + cdamage.shr(10).multiply(1000).div(tdamage.shr(10)).toNumber()/10  + '% '.clr('E69F00') + '</td></tr>'+ newLine
+      + '<td>' +  crit  + '% '.clr('E69F00') + '</td></tr>'+ newLine
     }
     dpsmsg += '</table>'
     lastDps = dpsmsg
