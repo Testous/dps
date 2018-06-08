@@ -5,13 +5,44 @@ const Command = require('command')
 const Long = require("long")
 const config = require('./config.json')
 const regionConfig = require('../../config.json')
-const log = require('./logger')
+//const log = require('./logger')
 const xmldom = require('xmldom')
 const fs = require('fs')
 const path = require('path')
 const UI = require('ui')
 
 String.prototype.clr = function (hexColor) { return `<font color='#${hexColor}'>${this}</font>` }
+
+function c(method) {
+  // eslint-disable-next-line no-console
+  return (...args) => {
+    if (typeof args[0] !== 'string') {
+      const obj = args.shift();
+      if (obj.req) args.push('\nurl: ' + obj.req.url);
+      if (obj.err) args.push('\n' + obj.err.stack);
+    }
+
+    if (typeof args[0] === 'string') {
+      args[0] = `[sls] ${args[0]}`;
+    }
+
+    console[method](...args);
+  };
+}
+
+try {
+  // eslint-disable-next-line global-require, import/no-extraneous-dependencies
+  module.exports = require('baldera-logger')('tera-proxy-sls');
+} catch (err) {
+  module.exports = {
+    trace: () => {},
+    debug: () => {},
+    info: c('log'),
+    warn: c('warn'),
+    error: c('error'),
+    fatal: c('error'),
+  };
+}
 
 const errorHandler = {
   warning(msg) {
@@ -155,7 +186,7 @@ module.exports = function DPS(d,ctx) {
     hpPer = Math.floor((hpCur / hpMax) * 100)
     nextEnrage = (hpPer > 10) ? (hpPer - 10) : 0
 
-    log(e)
+    //log(e)
 
     if(!isBoss(e.id.toString())){
       newboss = {
@@ -278,6 +309,8 @@ module.exports = function DPS(d,ctx) {
 
     memberIndex = getPartyMemberIndex(e.source.toString())
     sourceId = e.source.toString()
+    target = e.target.toString()
+
     if(memberIndex < 0){
       // projectile
       ownerIndex = getPartyMemberIndex(e.owner.toString())
@@ -291,17 +324,33 @@ module.exports = function DPS(d,ctx) {
           memberIndex = petIndex
           sourceId = party[memberIndex].gameId
         }
+        else{
+          //log('[DPS] : unhandled damage')
+          //log(e)
+        }
       }
     }
-    target = e.target.toString()
-    if(memberIndex >= 0  && e.damage > 0 && isBoss(target) ){
-      addMemberDamage(sourceId,target,e.damage.toString(),e.crit)
+
+    if(memberIndex >= 0  && e.damage > 0 && isBoss(target) && !e.blocked ){
+      if(!addMemberDamage(sourceId,target,e.damage.toString(),e.crit))
+      {
+        log('[DPS] : unhandled damage ' + e.damage + ' target : ' + target)
+        log('[DPS] : srcId : ' + sourceId + ' mygId : ' + mygId)
+        log(e)
+      }
+
       if(mygId.localeCompare(sourceId) == 0 && e.damage.gt(notice_damage)) {
         toNotice(myDps(memberIndex,e.damage,target))
-        //e.damage=0
-        //return true
       }
     }
+    else
+    {
+      log('[DPS] : unhandled damage 2' + e.damage + ' target:' + target)
+      log('[DPS] : srcId' + sourceId + ' mygId:' + mygId)
+      log(e)
+    }
+    //log(e)
+    // poison damage cannot hanndled by this packet
 
   })
 
@@ -431,6 +480,7 @@ module.exports = function DPS(d,ctx) {
 
   function addMemberDamage(id,target,damage,crit)
   {
+    log('addMemberDamage ' + id + ' ' + target + ' ' + damage + ' ' + crit)
     bossindex = getBossIndex(target)
     if( bossindex >= 0 && bosses[bossindex].battlestarttime == 0){
       bosses[bossindex].battlestarttime = Date.now()
@@ -443,9 +493,10 @@ module.exports = function DPS(d,ctx) {
         {
           party[i].damage = Long.fromString(damage).add(party[i].damage).toString()
           if(crit) party[i].critDamage = Long.fromString(party[i].critDamage).add(damage).toString()
-
           party[i].hit += 1
           if(crit) party[i].crit +=1
+          //log('addMemberDamage true')
+          return true
         }
         else{ // new monster
           party[i].battlestarttime = Date.now()
@@ -453,13 +504,16 @@ module.exports = function DPS(d,ctx) {
           party[i].damage = damage
           if(crit) party[i].critDamage = damage
           else party[i].critDamage = "0"
-
           party[i].hit = 1
           if(crit) party[i].crit =1
           else party[i].crit = 0
+          //log('addMemberDamage true')
+          return true
         }
       }
     }
+    //log('addMemberDamage false')
+    return false
   }
 
   function membersDps(targetId)
@@ -497,7 +551,8 @@ module.exports = function DPS(d,ctx) {
         totalPartyDamage = totalPartyDamage.add(party[i].damage)
     }
 
-    log('total damage:sub Hp ' + totalPartyDamage + ':' + subHp)
+    //if(!totalPartyDamage.sub(subHp).equals(0))
+      //log('sub Hp : total damage' + subHp + '-' + totalPartyDamage + '=' + subHp.sub(totalPartyDamage))
 
     dpsmsg += '<table><tr><td>Name</td><td>DPS (dmg)</td><th>DPS (%)</td><td>Crit</td></tr>' + newLine
     for(i in party){

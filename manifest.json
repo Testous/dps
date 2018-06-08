@@ -1,8 +1,7 @@
 {
   "files": {
     "config.json": "39288ca3024ce12c45db4f097893a668bce77bd257281235786ff568675ad743",
-    "index.js": "69510ae472707a4b75755d07c388b73486c77a5bf20220399a0f55346992403d",
-    "logger.js": "3488d2c4d7b15a99f054e712b31752e26b3edab54bedfbaec94c981b3e6cf17d",
+    "index.js": "6c38de3f0fe2464c24dd875a46fc2a0de5186f9904571c3fb153fc69f53d6a9d",
     "README.md": "94103d41342ed74f8215002e630c4868e315492172d105a1321eb3e7cd1d744c",
     "monsters/monsters-EU-FR.xml": "94dbdbdb17ef9832a22c3c8fef3390291931c97a91b6403680fb4a5a6ec350e8",
     "monsters/monsters-EU-GER.xml": "3ceed53e2f2e6e5d2a0d6e33aa4574aabb1854d7347285faf4dc389dcce8d53a",
