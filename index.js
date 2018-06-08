@@ -248,6 +248,8 @@ module.exports = function DPS(d,ctx) {
         'name' : member.name.toString(),
         'class' : member.class.toString(),
         'targetId'  :  'NONE',
+        'hit' : 0,
+        'crit' : 0,        
         'damage'  :  'NONE',
         'critDamage' : 'NONE'
       }
