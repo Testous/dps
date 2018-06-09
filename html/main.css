@@ -23,7 +23,9 @@ table ,td, tr{
   padding : 3;
 }
 div {
-    overflow-y: auto;
+  width: 300;
+  height: 200;
+  overflow-y: auto;
 }
 
 .enraged {

@@ -1,11 +1,11 @@
 {
   "files": {
     "config.json": {"overwrite": false, "hash": "39288ca3024ce12c45db4f097893a668bce77bd257281235786ff568675ad743"},
-    "index.js": "3761ae4090fa2ce69a6f86e33a1a7f46a0dfd1c0e1bcfe00e55d092f63852fab",
+    "index.js": "cafaf82ec4f382f1f27dca9ed26b48cc49a7b5d523ef1ba544e7bbbc2d60aa93",
     "README.md": "8bf96c900591ca4f33f417318785704bd3efd5560f2f2d0eefb76b9830285cfd",
     "ui.zip": "e7e2c37b57b4248529ba721a9e05e53ac00527e1417664c75aa01c902a559f1e",
-    "html/index.html": "f68870d7e16107a5ac13df2f688ec2d230ea321816d3169a5d02aae652c55ef8",
-    "html/main.css": "7f02b4546b5f17b46dddd80f9c0092965db3f86d7aec246a1c8b3686b6403954",
+    "html/index.html": "9bedea5da626c44fb3b0affddb5658d5f85e934d50d1e114470a193164d653ba",
+    "html/main.css": "15f8b99d3611bbd51f1d7f3e6e65c6b27a8f3d7932de58839bd9370787eec201",
     "html/class-icons/archer.png": "443e205979276fdb92244175782af8b0dd36289a430da609360999b0b40aba79",
     "html/class-icons/berserker.png": "6c97e7a09ee329dd6534b5e2f3ed73aa10a9704aa08080dcf9b03740d9fea6c7",
     "html/class-icons/brawler.png": "3812473d79fe2b0c568eb286123b3ca684651b3ea8d95ee971464100710a3fb5",

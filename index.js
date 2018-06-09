@@ -5,7 +5,6 @@ const Command = require('command')
 const Long = require("long")
 const config = require('./config.json')
 const regionConfig = require('../../config.json')
-//const log = require('./logger')
 const xmldom = require('xmldom')
 const fs = require('fs')
 const path = require('path')
@@ -122,7 +121,7 @@ module.exports = function DPS(d,ctx) {
     const api = getData(req.params[0]);
     switch(api[1]) {
      case "R":
-     return res.status(200).json(membersDps(currentbossId) + estatus);
+     return res.status(200).json(estatus + membersDps(currentbossId) );
      case "H":
      toChat(dpsHistory)
      //toNotice(dpsHistory)
@@ -586,8 +585,8 @@ module.exports = function DPS(d,ctx) {
       cname=party[i].name
       if(party[i].gameId.localeCompare(mygId) == 0) cname=cname.clr('00FF00')
       cimg = '<img class=class' +party[i].class + ' />'
-      cname = cimg + cname
-      log(cname)
+      cname = cname + cimg
+      //log(cname)
 
       dps = (tdamage.div(battleduration).toNumber()/1000).toFixed(1)
       dps = numberWithCommas(dps)
