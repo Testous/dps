@@ -1,0 +1,99 @@
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  font: normal 14px Arial, Helvetica, sans-serif;
+}
+
+html {
+  overflow: hidden;
+  box-sizing: border-box;
+  background-color: #2E3440;
+}
+
+body {
+    color: #FFFFFF;
+}
+
+table ,td, tr{
+  border-collapse:collapse;
+  border: 1px solid;
+  vertical-align: center;
+  text-align: right;
+  padding : 3;
+}
+div {
+    overflow-y: auto;
+}
+
+.enraged {
+  width: 16px;
+  height: 16px;
+  content:url("./icons/enraged.png")
+}
+
+.class0 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/warrior.png")
+}
+.class1 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/lancer.png")
+}
+.class2 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/slayer.png")
+}
+.class3 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/berserker.png")
+}
+.class4 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/sorcerer.png")
+}
+.class5 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/archer.png")
+}
+.class6 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/priest.png")
+}
+.class7 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/mystic.png")
+}
+.class8 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/reaper.png")
+}
+.class9 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/gunner.png")
+}
+.class10 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/brawler.png")
+}
+.class11 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/ninja.png")
+}
+.class12 {
+  width: 16px;
+  height: 16px;
+  content:url("./class-icons/valkyrie.png")
+}

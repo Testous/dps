@@ -71,6 +71,7 @@ module.exports = function DPS(d,ctx) {
 
   let mygId,
   myplayerId= '',
+  myclass='',
   gzoneId = new Array(),
   gmonsterId = new Array(),
   boss = new Set(),
@@ -89,7 +90,7 @@ module.exports = function DPS(d,ctx) {
   var filename = path.join(__dirname, '/monsters/monsters-'+ region + '.xml')
   var doc = null
   const ui = UI(d)
-  ui.use(UI.static(__dirname + '/ui'))
+  ui.use(UI.static(__dirname + '/html'))
 
   const paramRegex = /(\d*)(\D*)/;
 
@@ -139,6 +140,7 @@ module.exports = function DPS(d,ctx) {
     mygId=e.gameId.toString()
     myplayerId=e.playerId.toString()
     myname=e.name.toString()
+    //myclass=e.class.toString()
     party = []
     putMeInParty()
   })
@@ -158,7 +160,7 @@ module.exports = function DPS(d,ctx) {
       'gameId' : mygId,
       'playerId' : myplayerId,
       'name' : myname,
-      'class' : '',
+      'class' : myclass,
       'targetId'  :  'NONE',
       'hit' : 0,
       'crit' : 0,
@@ -266,7 +268,7 @@ module.exports = function DPS(d,ctx) {
     } else if (e.enraged === 0 && enraged) {
       if (hpPer === 100) return
       enraged = false
-      estatus = 'Next enraged at ' + nextEnrage + '%'
+      estatus = 'Next enraged at ' + nextEnrage.toString().clr('FF0000') + '%'
     }
   })
 
@@ -334,9 +336,9 @@ module.exports = function DPS(d,ctx) {
     if(memberIndex >= 0  && e.damage > 0 && isBoss(target) && !e.blocked ){
       if(!addMemberDamage(sourceId,target,e.damage.toString(),e.crit))
       {
-        log('[DPS] : unhandled damage ' + e.damage + ' target : ' + target)
-        log('[DPS] : srcId : ' + sourceId + ' mygId : ' + mygId)
-        log(e)
+        //log('[DPS] : unhandled damage ' + e.damage + ' target : ' + target)
+        //log('[DPS] : srcId : ' + sourceId + ' mygId : ' + mygId)
+        //log(e)
       }
 
       if(mygId.localeCompare(sourceId) == 0 && e.damage.gt(notice_damage)) {
@@ -345,9 +347,9 @@ module.exports = function DPS(d,ctx) {
     }
     else
     {
-      log('[DPS] : unhandled damage 2' + e.damage + ' target:' + target)
-      log('[DPS] : srcId' + sourceId + ' mygId:' + mygId)
-      log(e)
+      //log('[DPS] : unhandled damage 2 ' + e.damage + ' target:' + target)
+      //log('[DPS] : srcId' + sourceId + ' mygId:' + mygId)
+      //log(e)
     }
     //log(e)
     // poison damage cannot hanndled by this packet
@@ -480,7 +482,7 @@ module.exports = function DPS(d,ctx) {
 
   function addMemberDamage(id,target,damage,crit)
   {
-    log('addMemberDamage ' + id + ' ' + target + ' ' + damage + ' ' + crit)
+    //log('addMemberDamage ' + id + ' ' + target + ' ' + damage + ' ' + crit)
     bossindex = getBossIndex(target)
     if( bossindex >= 0 && bosses[bossindex].battlestarttime == 0){
       bosses[bossindex].battlestarttime = Date.now()
@@ -538,7 +540,8 @@ module.exports = function DPS(d,ctx) {
     var seconds = Math.floor(battleduration % 60)
 
     dpsmsg = findZoneMonster(bosses[bossIndex].huntingZoneId,bosses[bossIndex].templateId)  + ' ' + minutes + ':' + seconds + newLine + '</br>'
-    dpsmsg = `${enraged ? dpsmsg.clr('FF0000') : dpsmsg.clr('E69F00') }`
+    dpsmsg = dpsmsg.clr('E69F00')
+    if(enraged) dpsmsg = '<img class=enraged />'+dpsmsg
 
 
     party.sort(function(a,b) {return (Number(a.damage) < Number(b.damage)) ? 1 : ((Number(b.damage) < Number(a.damage)) ? -1 : 0);} );
@@ -560,8 +563,12 @@ module.exports = function DPS(d,ctx) {
       tdamage = Long.fromString(party[i].damage)
       cdamage = Long.fromString(party[i].critDamage)
 
+
       cname=party[i].name
       if(party[i].gameId.localeCompare(mygId) == 0) cname=cname.clr('00FF00')
+      cimg = '<img class=class' +party[i].class + ' />'
+      cname = cimg + cname
+      log(cname)
 
       dps = (tdamage.div(battleduration).toNumber()/1000).toFixed(1)
       dps = numberWithCommas(dps)

@@ -1,8 +1,25 @@
 {
   "files": {
     "config.json": "39288ca3024ce12c45db4f097893a668bce77bd257281235786ff568675ad743",
-    "index.js": "6c38de3f0fe2464c24dd875a46fc2a0de5186f9904571c3fb153fc69f53d6a9d",
+    "index.js": "d3498da730fecbfbed530ba88e6d474c5a69e3ac5be36aed2f2567a64c03cb93",
     "README.md": "94103d41342ed74f8215002e630c4868e315492172d105a1321eb3e7cd1d744c",
+    "html/index.html": "f68870d7e16107a5ac13df2f688ec2d230ea321816d3169a5d02aae652c55ef8",
+    "html/main.css": "7f02b4546b5f17b46dddd80f9c0092965db3f86d7aec246a1c8b3686b6403954",
+    "html/class-icons/archer.png": "443e205979276fdb92244175782af8b0dd36289a430da609360999b0b40aba79",
+    "html/class-icons/berserker.png": "6c97e7a09ee329dd6534b5e2f3ed73aa10a9704aa08080dcf9b03740d9fea6c7",
+    "html/class-icons/brawler.png": "3812473d79fe2b0c568eb286123b3ca684651b3ea8d95ee971464100710a3fb5",
+    "html/class-icons/common.png": "f624aa00c9c65c202141b90a416382347279b2a8c86294cbfa855ec23f347d7a",
+    "html/class-icons/gunner.png": "6ab0fa0e5638994329b6cb0ac40fde13459a048c75783ebc3676ca3280ad81fb",
+    "html/class-icons/lancer.png": "1e043992893e76dc481f0891b83234dea2afae0e7c1f18638fa24816ec8c132c",
+    "html/class-icons/mystic.png": "12c35b7037833cdb452d066129746a86b32e58d8f1ce1278245ece983fdea567",
+    "html/class-icons/ninja.png": "74f17a9f8242168fa732e6da3d16b06a8a5ab1f9a510f839ceda480495bd15bf",
+    "html/class-icons/priest.png": "ff3a880b259857396b186eab9bad54e69adfb13534990390b71e1f1134d3bcc5",
+    "html/class-icons/reaper.png": "6a866e1df0d3b160f6fd6a5f704eb539bd8b26c5c9548c9b1463d68249835b6a",
+    "html/class-icons/slayer.png": "ebc18c50c6612a26b2bd3a148c59f118801099cc56f2140e06f9a79b11012ebc",
+    "html/class-icons/sorcerer.png": "1a34895383b01e370015880ff2ff0f3594498a90c9713c97c3f5e481ec529b80",
+    "html/class-icons/valkyrie.png": "db359c9209aed10edd2caa6b0331d36745c7f2088bb6937b7251c2facb9a4248",
+    "html/class-icons/warrior.png": "171efdf56404f82727411e31d4a07b3a2db79b2ba122618dd9d8a1e518967384",
+    "html/icons/enraged.png": "536623e510a164645c70862a594b5a0c949acdea400691590c34e54dfeb6d409",
     "monsters/monsters-EU-FR.xml": "94dbdbdb17ef9832a22c3c8fef3390291931c97a91b6403680fb4a5a6ec350e8",
     "monsters/monsters-EU-GER.xml": "3ceed53e2f2e6e5d2a0d6e33aa4574aabb1854d7347285faf4dc389dcce8d53a",
     "monsters/monsters-EU.xml": "e1577fd01e6783dfc7b02c84691bb3311200d9608428e9940af6e7d9ab121edc",
@@ -13,9 +30,7 @@
     "monsters/monsters-override.xml": "e702ed1b4bc8e7eb09f80386d1c5277c5c1f3190834a014c563ba9505aa11053",
     "monsters/monsters-RU.xml": "4ca3f0f3b086d698b4b7414d07723edc3f1082278f90b46bb798b7113ab7579d",
     "monsters/monsters-THA.xml": "1719de8f1e1a2549bb79fcaaa0939feb7cf39c7ea67c48bef3f5263e7eddc7be",
-    "monsters/monsters-TW.xml": "95243e235bc4eb967b182f9a4f3a9072769a7d6fe0b19255390123d1043b82f9",
-    "ui/index.html": "618b2af35d4c62d6c464fbbeccfaab2b7c0b999d8d0e09e35e3b89fd76ecf7fc",
-    "ui/main.css": "ee8608a7996dbe47c89f75335c4c6e4dacfee7a46c51818c27d55d4cea177eff"
+    "monsters/monsters-TW.xml": "95243e235bc4eb967b182f9a4f3a9072769a7d6fe0b19255390123d1043b82f9"
   },
   "defs": {
     "S_LOGIN": 10,
