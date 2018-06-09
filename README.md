@@ -17,7 +17,6 @@ Notice damage as like the above picture.
 
 - nodejs  [here](https://nodejs.org/en/)
 - tera proxy (recommand [Caali's](https://cdn.discordapp.com/attachments/394446642465603584/435128362294575104/tera-proxy.7z))
-- Pinki [ui](https://github.com/pinkipi/ui)
 
 ## Install
 
