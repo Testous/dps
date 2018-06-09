@@ -245,10 +245,11 @@ module.exports = function DPS(d,ctx) {
     bossindex = getBossIndex(id)
     if( bossindex >= 0 && bosses[bossindex].battleendtime == 0){
       bosses[bossindex].battleendtime = Date.now()
+      enraged = false
+      estatus = 'Dead'
       tmp = membersDps(id)
       dpsHistory += tmp
       lastDps=tmp
-      enraged = false
       bosses.splice(bossindex,1)
     }
     for(i in NPCs){
