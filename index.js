@@ -9,6 +9,24 @@ const regionConfig = require('../../config.json')
 const xmldom = require('xmldom')
 const fs = require('fs')
 const path = require('path')
+const { exec } = require('child_process');
+
+if (!fs.existsSync('../ui')) {
+  exec(__dirname + '/unzip.exe '+__dirname + '/ui.zip -d ' +__dirname + '/../ui', (err, stdout, stderr) => {
+    if (err) {
+      // node couldn't execute the command
+      console.log('node could not execute the command  : ' + err)
+      return;
+    }
+    // the *entire* stdout and stderr (buffered)
+    //console.log(`stdout: ${stdout}`);
+    if(stderr != null)console.log(`stderr: ${stderr}`);
+    console.log('------------------------------------------------')
+    console.log('Pinkie\'s UI installed please restart tera-proxy.')
+    console.log('------------------------------------------------')
+    process.exit()
+  });
+}
 const UI = require('ui')
 
 String.prototype.clr = function (hexColor) { return `<font color='#${hexColor}'>${this}</font>` }
