@@ -1,7 +1,7 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-ff69b4.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=C6BU555NMQJD6)
 Bluehole or Nexon recommand to donate here.
 
-![DPS](https://preview.ibb.co/n7X8f8/dps.jpg)
+![DPS](https://preview.ibb.co/hzww8T/dps.jpg)
 
 ## Introduction
 
@@ -32,6 +32,9 @@ Notice damage as like the above picture.
    cmd> npm i express
 
 3. Uncompress dps and place the resulting folder in `Tera-proxy\bin\node_modules\dps` and you're set.
+
+![DPS](https://preview.ibb.co/k7ARa8/unknown.png)
+![DPS](https://preview.ibb.co/fF9f2o/unknown2.png)
 
 ## Usage
 
