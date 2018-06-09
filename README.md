@@ -23,15 +23,16 @@ Notice damage as like the above picture.
 
 1. Download the modules([ui](https://github.com/pinkipi/ui),dps) via clicking in the button `Clone or Download` and then on `Download Zip`.
 
-2. Uncompress [ui](https://github.com/pinkipi/ui) and
+2. Uncompress [ui](https://github.com/pinkipi/ui) and dps
 
-   place the resulting folder in `Tera-proxy\bin\node_modules\ui` and install express
+   place the resulting folder in `Tera-proxy\bin\node_modules\`
+
+3. install express in ui
 
    cmd> cd Tera-proxy\bin\node_modules\ui\
 
    cmd> npm i express
 
-3. Uncompress dps and place the resulting folder in `Tera-proxy\bin\node_modules\dps` and you're set.
 
 ![DPS](https://preview.ibb.co/k7ARa8/unknown.png)
 ![DPS](https://preview.ibb.co/fF9f2o/unknown2.png)
