@@ -26,7 +26,8 @@ Notice damage as like the above picture.
 
    place the resulting folder in `Tera-proxy\bin\node_modules\`
 
-![DPS](https://preview.ibb.co/k7ARa8/unknown.png)
+   like below
+
 ![DPS](https://preview.ibb.co/fF9f2o/unknown2.png)
 
 ## Usage

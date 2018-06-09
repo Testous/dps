@@ -157,7 +157,8 @@ module.exports = function DPS(d,ctx) {
     mygId=e.gameId.toString()
     myplayerId=e.playerId.toString()
     myname=e.name.toString()
-    //myclass=e.class.toString()
+    //# For players the convention is 1XXYY (X = 1 + race*2 + gender, Y = 1 + class). See C_CREATE_USER
+    myclass = Number((e.templateId - 1).toString().slice(-2)).toString();
     party = []
     putMeInParty()
   })
