@@ -16,7 +16,7 @@ Notice damage as like the above picture.
 ## Prerequisite
 
 - nodejs  [here](https://nodejs.org/en/)
-- tera proxy (recommand [Caali's](https://cdn.discordapp.com/attachments/394446642465603584/435128362294575104/tera-proxy.7z))
+- tera proxy
 
 ## Install
 
