@@ -102,6 +102,8 @@ module.exports = function DPS(d,ctx) {
   missingDamage = new Long(0,0),
   enraged = false,
   estatus = '',
+  timeout = 0,
+  timeoutCounter = 0,
   nextEnrage = 0
 
   var filename = path.join(__dirname, '/monsters/monsters-'+ region + '.xml')
@@ -121,7 +123,7 @@ module.exports = function DPS(d,ctx) {
     const api = getData(req.params[0]);
     switch(api[1]) {
      case "R":
-     return res.status(200).json(estatus + membersDps(currentbossId) );
+     return res.status(200).json(estatus+ '</br>' + membersDps(currentbossId) );
      case "H":
      toChat(dpsHistory)
      //toNotice(dpsHistory)
@@ -217,7 +219,8 @@ module.exports = function DPS(d,ctx) {
         'maxHp' : e.curHp.toString(),
         'subHp' : subHp.toString(),
         'battlestarttime' : 0,
-        'battleendtime' : 0
+        'battleendtime' : 0,
+        'dpsmsg' : ''
       }
       bosses.push(newboss)
     }
@@ -264,10 +267,14 @@ module.exports = function DPS(d,ctx) {
     if( bossindex >= 0 && bosses[bossindex].battleendtime == 0){
       bosses[bossindex].battleendtime = Date.now()
       enraged = false
-      estatus = 'Dead'
-      tmp = membersDps(id)
-      dpsHistory += tmp
-      lastDps=tmp
+      clearTimeout(timeout)
+      clearTimeout(timeoutCounter)
+      timeout = 0
+      timeoutCounter = 0
+      estatus = ''
+      // check if this packet comes later then attack on new boss monster
+      if(id.localeCompare(currentbossId) == 0) dpsHistory += membersDps(id)
+      else dpsHistory += bosses[bossindex].dpsmsg
       bosses.splice(bossindex,1)
     }
     for(i in NPCs){
@@ -283,9 +290,14 @@ module.exports = function DPS(d,ctx) {
     if(!isBoss(e.creature.toString())) return
     if (e.enraged === 1 && !enraged) {
       enraged = true
+      timeout = setTimeout(timeRemaining, 26000)
       estatus = 'Boss Enraged'.clr('FF0000')
     } else if (e.enraged === 0 && enraged) {
       if (hpPer === 100) return
+      clearTimeout(timeout)
+      clearTimeout(timeoutCounter)
+      timeout = 0
+      timeoutCounter = 0
       enraged = false
       estatus = 'Next enraged at ' + nextEnrage.toString().clr('FF0000') + '%'
     }
@@ -388,7 +400,7 @@ module.exports = function DPS(d,ctx) {
       log('ERROR xml doc')
       return;
     }
-    log(findZoneMonster(152,2003)) //학살의 사브라니악
+    //log(findZoneMonster(152,2003)) //학살의 사브라니악
   });
 
   function findZoneMonster(zoneId,monsterId)
@@ -529,6 +541,7 @@ module.exports = function DPS(d,ctx) {
           if(crit) party[i].crit =1
           else party[i].crit = 0
           //log('addMemberDamage true')
+          log('addMemberDamage new monster')
           return true
         }
       }
@@ -547,13 +560,13 @@ module.exports = function DPS(d,ctx) {
     var cdamage = new Long(0,0)
     var totalPartyDamage = new Long(0,0)
     bossIndex = getBossIndex(targetId)
-    if(bossIndex < 0) return lastDps
+
+    if(bossIndex < 0 ) return lastDps
+    if(bosses[bossIndex].battlestarttime == 0 ) return lastDps
 
     if( bosses[bossIndex].battleendtime == 0) endtime=Date.now()
     else endtime=bosses[bossIndex].battleendtime
-
-    if(bosses[bossIndex].battlestarttime == 0 ) battleduration = 0
-    else battleduration = Math.floor((endtime-bosses[bossIndex].battlestarttime) / 1000)
+    battleduration = Math.floor((endtime-bosses[bossIndex].battlestarttime) / 1000)
 
     var minutes = Math.floor(battleduration / 60)
     var seconds = Math.floor(battleduration % 60)
@@ -601,7 +614,12 @@ module.exports = function DPS(d,ctx) {
       + '<td>' +  crit  + '% '.clr('E69F00') + '</td></tr>'+ newLine
     }
     dpsmsg += '</table>'
+
+    // for history
+    bosses[bossIndex].dpsmsg = dpsmsg
+    // To display last msg on ui even if boss removed from list by DESPAWN packet
     lastDps = dpsmsg
+
     return dpsmsg
   }
 
@@ -639,6 +657,20 @@ module.exports = function DPS(d,ctx) {
     dpsmsg = numberWithCommas(damage.shr(10).toString()) + ' k '.clr('E69F00') + dps + ' k/s '.clr('E69F00')
 
     return dpsmsg
+  }
+
+  function timeRemaining() {
+      let i = 10
+      timeoutCounter = setInterval( () => {
+          if (enraged && i > 0) {
+              estatus = 'Boss Enraged'.clr('FF0000') + ' Time remaining : ' + `${i}`.clr('FF0000') + ' seconds'.clr('FFFFFF')
+              i--
+          } else {
+              clearInterval(timeoutCounter)
+              timeoutCounter = -1
+              estatus = ''
+          }
+      }, 1000)
   }
 
   function numberWithCommas(x) {
