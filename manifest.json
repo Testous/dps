@@ -4,10 +4,10 @@
 			"overwrite": false,
 			"hash": "fd6d72a75b8ecd6c71c8f017f1eb1d1e389752bf22ca81476f3572065453f506"
 		},
-		"index.js": "a9a3f6d1f6231ba7078ee7d9cf2478da0b9afb07fefbbb1395f62a14a0a3ec14",
+		"index.js": "0a8be1934edcb27cd537075593fa80b2e47d4e02a34843ed145fd843a6d68a25",
 		"README.md": "34a2f99f6fd26c290836e018c08f333b93b6911934a62971c4485d1fe7afd41c",
 		"ui.zip": "e7e2c37b57b4248529ba721a9e05e53ac00527e1417664c75aa01c902a559f1e",
-		"html/index.html": "b6750c0d00e564a65112f148c4f6a44b3524b157e71345e33be6bb6fcfcfcdb2",
+		"html/index.html": "e86bda75c45a4e1f71930f53efb99cb22977eb2e74af3cdf3aadc49a02a89320",
 		"html/main.css": "25807bd9971eca36d1de39a4ba1b59a94c5c96dbc76e668b4a043bb250073250",
 		"html/class-icons/archer.png": "443e205979276fdb92244175782af8b0dd36289a430da609360999b0b40aba79",
 		"html/class-icons/berserker.png": "6c97e7a09ee329dd6534b5e2f3ed73aa10a9704aa08080dcf9b03740d9fea6c7",
@@ -35,8 +35,7 @@
 		"monsters/monsters-RU.xml": "4ca3f0f3b086d698b4b7414d07723edc3f1082278f90b46bb798b7113ab7579d",
 		"monsters/monsters-THA.xml": "1719de8f1e1a2549bb79fcaaa0939feb7cf39c7ea67c48bef3f5263e7eddc7be",
 		"monsters/monsters-TW.xml": "95243e235bc4eb967b182f9a4f3a9072769a7d6fe0b19255390123d1043b82f9",
-		"Newtonsoft.Json.dll": "564e6201dbf6354460d9ca180f0752d50dd7496fff49e05f67a9af42a2e772c7",
-		"unzip.exe": "81046f943d26501561612a629d8be95af254bc161011ba8a62d25c34c16d6d2a"
+		"unzip.exe": "81046f943d26501561612a629d8be95af254bc161011ba8a62d25c34c16d6d2a",
 	},
 	"defs": {
 		"S_LOGIN": 10,

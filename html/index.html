@@ -15,6 +15,7 @@
 
 	function refreshCB()
 	{
+		//_tera_client_proxy_.set_title('Enraged')
 		document.getElementById("content").innerHTML = this.responseText.replace(/(\\n|\"|\\)/gm,"");
 	}
 
@@ -24,7 +25,12 @@
 	}
 	function NoticeCB() {}
 	function Notice() {
-		xhr("N",NoticeCB)
+		var checkBox = document.getElementById("N");
+		if (checkBox.checked == true){
+				xhr("1N",NoticeCB)
+		} else {
+			 xhr("0N",NoticeCB)
+		}
 	}
 
 	function DebugCB() {}
@@ -82,10 +88,8 @@
 <body>
 	<div  id="content" width=300 height=200></div >
 		<button type="button" id="H" onclick="History()">History</button>
-		<button type="button" id="N" onclick="Notice()">Notice</button>
-		<!-- <input type="text" id="NDV" onkeypress='validate(event)' value="">
-		<button type="button" id="ND" onclick="NoticeDamage()">ND</button> -->
 		<button type="button" id="A" onclick="NoticeDamageAdd()">Notice value</button>
+		<input type="checkbox" id="N" onclick="Notice()">Notice</button>
 		<br><br><br><br>
 		<button type="button" id="B" onclick="Debug()">Debug</button>
 </body>

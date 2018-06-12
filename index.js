@@ -121,6 +121,7 @@ module.exports = function DPS(d,ctx) {
 
   function api(req, res) {
     const api = getData(req.params[0]);
+    req_value = Number(api[0])
     switch(api[1]) {
      case "R":
      return res.status(200).json(estatus+ '</br>' + membersDps(currentbossId) );
@@ -129,17 +130,18 @@ module.exports = function DPS(d,ctx) {
      //toNotice(dpsHistory)
      return res.status(200).json("ok");
      case "N":
-     notice = !notice
+     req_value == 1 ? notice = true : notice = false
+     log('req_value : ' + req_value)
      send(`Notice to screen ${notice ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
      return res.status(200).json("ok");
      case "D":
      //console.log(api)
-     notice_damage = Number(api[0])
+     notice_damage = req_value
      send('Notice damage is ' + numberWithCommas(notice_damage.toString()))
      return res.status(200).json(notice_damage.toString());
      case "A":
      //console.log(api)
-     notice_damage += notice_damage
+     notice_damage += 1000000
      if(notice_damage > 20000000) notice_damage = 1000000
      send('Notice damage is ' + numberWithCommas(notice_damage.toString()))
      return res.status(200).json(notice_damage.toString());
