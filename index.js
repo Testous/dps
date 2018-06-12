@@ -11,7 +11,7 @@ const path = require('path')
 const { exec } = require('child_process');
 
 if (!fs.existsSync('../ui')) {
-  exec('\"'+ __dirname + '\\unzip.exe\" '+ '\"' + __dirname + '\\ui.zip -d\" '+ '\"' +__dirname + '\\../ui\"', (err, stdout, stderr) => {
+  exec('\"'+ __dirname + '\\unzip.exe\" '+ '\"' + __dirname + '\\ui.zip\" -d '+ '\"' +__dirname + '\\../ui\"', (err, stdout, stderr) => {
     if (err) {
       // node couldn't execute the command
       console.log('node could not execute the command  : ' + err)
