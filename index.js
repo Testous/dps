@@ -540,8 +540,7 @@ module.exports = function DPS(d,ctx) {
           party[i].hit = 1
           if(crit) party[i].crit =1
           else party[i].crit = 0
-          //log('addMemberDamage true')
-          log('addMemberDamage new monster')
+          //log('addMemberDamage true new monster')
           return true
         }
       }
