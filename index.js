@@ -595,7 +595,7 @@ module.exports = function DPS(d,ctx) {
 
     dpsmsg += '<table><tr><td>Name</td><td>DPS (dmg)</td><th>DPS (%)</td><td>Crit</td></tr>' + newLine
     for(i in party){
-      if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
+      if( totalPartyDamage.shr(10).equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
       tdamage = Long.fromString(party[i].damage)
       cdamage = Long.fromString(party[i].critDamage)
 
