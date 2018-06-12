@@ -32,7 +32,12 @@
 			 xhr("0N",NoticeCB)
 		}
 	}
-
+	function CloseDpsCB() {
+		_tera_client_proxy_.close()
+	}
+	function CloseDps() {
+		xhr("P",CloseDpsCB)
+	}
 	function DebugCB() {}
 	function Debug() {
 		xhr("B",DebugCB)
@@ -89,7 +94,8 @@
 	<div  id="content" width=300 height=200></div >
 		<button type="button" id="H" onclick="History()">History</button>
 		<button type="button" id="A" onclick="NoticeDamageAdd()">Notice value</button>
-		<input type="checkbox" id="N" onclick="Notice()">Notice</button>
+		<input type="checkbox" id="N" onclick="Notice()">Notice</input>
+		<button type="button" id="P" onclick="CloseDps()">CloseDps</button>
 		<br><br><br><br>
 		<button type="button" id="B" onclick="Debug()">Debug</button>
 </body>

@@ -127,11 +127,13 @@ module.exports = function DPS(d,ctx) {
      return res.status(200).json(estatus+ '</br>' + membersDps(currentbossId) );
      case "H":
      toChat(dpsHistory)
-     //toNotice(dpsHistory)
+     return res.status(200).json("ok");
+     case "P":
+     enable = false
+     send(`${enable ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')}`)
      return res.status(200).json("ok");
      case "N":
      req_value == 1 ? notice = true : notice = false
-     log('req_value : ' + req_value)
      send(`Notice to screen ${notice ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
      return res.status(200).json("ok");
      case "D":
@@ -173,6 +175,7 @@ module.exports = function DPS(d,ctx) {
     currentbossId = ''
     bosses = []
     NPCs = []
+    if (!enable) return
     ui.open()
   })
 
@@ -202,7 +205,7 @@ module.exports = function DPS(d,ctx) {
 
   //Boss Monsters
   d.hook('S_BOSS_GAGE_INFO',3, (e) => {
-    if (!enable) return
+    //if (!enable) return
     // notified boss before battle
     hpMax = e.maxHp
     hpCur = e.curHp
@@ -240,7 +243,7 @@ module.exports = function DPS(d,ctx) {
   })
 
   d.hook('S_SPAWN_NPC',8, (e) => {
-    if (!enable) return
+    //if (!enable) return
     newNPC = {
       'gameId' : e.gameId.toString(),
       'owner' : e.owner.toString(),
@@ -263,7 +266,7 @@ module.exports = function DPS(d,ctx) {
 
 
   d.hook('S_DESPAWN_NPC',3, (e) => {
-    if (!enable) return
+    //if (!enable) return
     id = e.gameId.toString()
     bossindex = getBossIndex(id)
     if( bossindex >= 0 && bosses[bossindex].battleendtime == 0){
@@ -288,7 +291,7 @@ module.exports = function DPS(d,ctx) {
   })
 
   d.hook('S_NPC_STATUS',1, (e) => {
-    if (!enable) return
+    //if (!enable) return
     if(!isBoss(e.creature.toString())) return
     if (e.enraged === 1 && !enraged) {
       enraged = true
@@ -340,7 +343,7 @@ module.exports = function DPS(d,ctx) {
 
   // damage handler : Core
   d.hook('S_EACH_SKILL_RESULT',6, (e) => {
-    if (!enable) return
+    //if (!enable) return
 
     memberIndex = getPartyMemberIndex(e.source.toString())
     sourceId = e.source.toString()
@@ -704,6 +707,8 @@ module.exports = function DPS(d,ctx) {
       send(`${enable ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')}`)
     }
     else if (arg == 'u' || arg=='ui') {
+      enable = true;
+      send(`${enable ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')}`)
       ui.open()
     }
     else if (arg == 'nd' || arg=='notice_damage') {
@@ -720,7 +725,7 @@ module.exports = function DPS(d,ctx) {
       notice = !notice
       send(`Notice to screen ${notice ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
     }
-    else send(`Invalid argument.`.clr('FF0000') + ' dps or dps h/c/n/s or dps nd 1000000')
+    else send(`Invalid argument.`.clr('FF0000') + ' dps or dps u/h/n/s or dps nd 1000000')
   })
 
   this.destructor = () => {
