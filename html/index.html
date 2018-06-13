@@ -42,6 +42,10 @@
 	function Debug() {
 		xhr("B",DebugCB)
 	}
+	function SendChatCB() {}
+	function SendChat() {
+		xhr("C",SendChatCB)
+	}
 
 	function NoticeDamageCB() {
 		//document.getElementById("NDV").value = this.responseText.replace(/(\")/gm,"");
@@ -53,6 +57,12 @@
 
 	function NoticeDamageAdd() {
 		xhr("A",NoticeDamageCB)
+	}
+
+	function Clipboard() {
+	  var copyText = document.getElementById("txt");
+	  copyText.select();
+	  document.execCommand("copy");
 	}
 
 	function validate(evt) {
@@ -87,6 +97,11 @@
 
 	}
 
+	window.onbeforeunload =  function() {
+		xhr("P",CloseDpsCB)
+		return null;
+	}
+
 
 	</script>
 </head>
@@ -96,6 +111,7 @@
 		<button type="button" id="A" onclick="NoticeDamageAdd()">Notice value</button>
 		<input type="checkbox" id="N" onclick="Notice()">Notice</input>
 		<button type="button" id="P" onclick="CloseDps()">CloseDps</button>
+		<button type="button" id="C" onclick="SendChat()">SendDpsToChat</button>
 		<br><br><br><br>
 		<button type="button" id="B" onclick="Debug()">Debug</button>
 </body>

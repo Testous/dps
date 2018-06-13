@@ -119,6 +119,10 @@ module.exports = function DPS(d,ctx) {
     return data;
   }
 
+  function stripOuterHTML(str) {
+  	return str.replace(/^<[^>]+>|<\/[^>]+><[^\/][^>]*>|<\/[^>]+>$/g, '')
+  }
+
   function api(req, res) {
     const api = getData(req.params[0]);
     req_value = Number(api[0])
@@ -150,6 +154,17 @@ module.exports = function DPS(d,ctx) {
      case "B":
      debug = !debug
      send(`Debug ${debug ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
+     return res.status(200).json("ok");
+     case "C":
+     d.toServer('C_CHAT', 1, {
+       "channel": 2,
+       "message": stripOuterHTML(lastDps)
+     })
+     //log(stripOuterHTML(lastDps))
+     /*d.toServer('C_WHISPER', 1, {
+       "target": ,
+       "message": stripOuterHTML(lastDps)
+     })*/
      return res.status(200).json("ok");
      default:
       return res.status(404).send("404");
