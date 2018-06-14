@@ -5,9 +5,7 @@ Bluehole or Nexon recommand to donate here.
 
 ## Introduction
 
-Tera DPS meter.(only for boss monster)
-
-Targeting less cpu/memory resources.
+Tera internal DPS meter.
 
 Enraged notifies in real time.
 
@@ -33,6 +31,7 @@ Notice damage as like the above picture.
 ## Usage
 
 - It pops up automatically when you spawn in a dungeon or type "!dps u"
+- If you don't want to pop up dps meter, press Close button on bottom.
 
 ## Online Support
 
