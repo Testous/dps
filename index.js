@@ -1,6 +1,7 @@
 /**
 * Created by rkkky on 2018-05-21.
 */
+//"use strict";
 const Command = require('command')
 const Long = require("long")
 const config = require('./config.json')
@@ -89,6 +90,7 @@ module.exports = function DPS(d,ctx) {
   let mygId,
   myplayerId= '',
   myclass='',
+  myname='',
   gzoneId = new Array(),
   gmonsterId = new Array(),
   boss = new Set(),
@@ -97,6 +99,7 @@ module.exports = function DPS(d,ctx) {
   party = new Array(),
   dpsHistory = '',
   lastDps= '',
+  currentZone='',
   currentbossId = '',
   subHp = new Long(0,0),
   missingDamage = new Long(0,0),
@@ -104,7 +107,9 @@ module.exports = function DPS(d,ctx) {
   estatus = '',
   timeout = 0,
   timeoutCounter = 0,
-  nextEnrage = 0
+  nextEnrage = 0,
+  hpPer = 0,
+  bossOnly = true
 
   var filename = path.join(__dirname, '/monsters/monsters-'+ region + '.xml')
   var doc = null
@@ -120,53 +125,52 @@ module.exports = function DPS(d,ctx) {
   }
 
   function stripOuterHTML(str) {
-  	return str.replace(/^<[^>]+>|<\/[^>]+><[^\/][^>]*>|<\/[^>]+>$/g, '')
+    return str.replace(/^<[^>]+>|<\/[^>]+><[^\/][^>]*>|<\/[^>]+>$/g, '')
   }
 
   function api(req, res) {
     const api = getData(req.params[0]);
-    req_value = Number(api[0])
+    var req_value = Number(api[0])
     switch(api[1]) {
-     case "R":
-     return res.status(200).json(estatus+ '</br>' + membersDps(currentbossId) );
-     case "H":
-     toChat(dpsHistory)
-     return res.status(200).json("ok");
-     case "P":
-     enable = false
-     send(`${enable ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')}`)
-     return res.status(200).json("ok");
-     case "N":
-     req_value == 1 ? notice = true : notice = false
-     send(`Notice to screen ${notice ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
-     return res.status(200).json("ok");
-     case "D":
-     //console.log(api)
-     notice_damage = req_value
-     send('Notice damage is ' + numberWithCommas(notice_damage.toString()))
-     return res.status(200).json(notice_damage.toString());
-     case "A":
-     //console.log(api)
-     notice_damage += 1000000
-     if(notice_damage > 20000000) notice_damage = 1000000
-     send('Notice damage is ' + numberWithCommas(notice_damage.toString()))
-     return res.status(200).json(notice_damage.toString());
-     case "B":
-     debug = !debug
-     send(`Debug ${debug ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
-     return res.status(200).json("ok");
-     case "C":
-     d.toServer('C_CHAT', 1, {
-       "channel": 2,
-       "message": stripOuterHTML(lastDps)
-     })
-     //log(stripOuterHTML(lastDps))
-     /*d.toServer('C_WHISPER', 1, {
-       "target": ,
-       "message": stripOuterHTML(lastDps)
-     })*/
-     return res.status(200).json("ok");
-     default:
+      case "R":
+      return res.status(200).json(estatus+ '</br>' + membersDps(currentbossId) );
+      case "H":
+      toChat(dpsHistory)
+      return res.status(200).json("ok");
+      case "P":
+      enable = false
+      send(`${enable ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')}`)
+      return res.status(200).json("ok");
+      case "N":
+      req_value == 1 ? notice = true : notice = false
+      send(`Notice to screen ${notice ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
+      return res.status(200).json("ok");
+      case "O":
+      req_value == 1 ? bossOnly = true : bossOnly = false
+      send(`Boss dps only ${bossOnly ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
+      return res.status(200).json("ok");
+      case "D":
+      //console.log(api)
+      notice_damage = req_value
+      send('Notice damage is ' + numberWithCommas(notice_damage.toString()))
+      return res.status(200).json(notice_damage.toString());
+      case "A":
+      //console.log(api)
+      notice_damage += 1000000
+      if(notice_damage > 20000000) notice_damage = 1000000
+      send('Notice damage is ' + numberWithCommas(notice_damage.toString()))
+      return res.status(200).json(notice_damage.toString());
+      case "B":
+      debug = !debug
+      send(`Debug ${debug ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
+      return res.status(200).json("ok");
+      case "C":
+      d.toServer('C_CHAT', 1, {
+        "channel": req_value,
+        "message": stripOuterHTML(lastDps)
+      })
+      return res.status(200).json("ok");
+      default:
       return res.status(404).send("404");
     }
   }
@@ -194,24 +198,7 @@ module.exports = function DPS(d,ctx) {
     ui.open()
   })
 
-  function putMeInParty()
-  {
-    newmember = {
-      'gameId' : mygId,
-      'playerId' : myplayerId,
-      'name' : myname,
-      'class' : myclass,
-      'targetId'  :  'NONE',
-      'hit' : 0,
-      'crit' : 0,
-      'damage'  :  'NONE',
-      'critDamage' : 'NONE'
-    }
 
-    if(!isPartyMember(mygId)) {
-      party.push(newmember)
-    }
-  }
 
 
   d.hook('S_LOAD_TOPO',3, (e) => {
@@ -259,12 +246,26 @@ module.exports = function DPS(d,ctx) {
 
   d.hook('S_SPAWN_NPC',8, (e) => {
     //if (!enable) return
-    newNPC = {
+    var newNPC = {
       'gameId' : e.gameId.toString(),
       'owner' : e.owner.toString(),
-      'name' : e.npcName
+      //'name' : e.npcName,
+      'huntingZoneId' : e.huntingZoneId,
+      'templateId' : e.templateId,
+      'zoneName' : 'unknown',
+      'npcName' : 'unknown',
+      'isBoss' : false,
+      'battlestarttime' : 0,
+      'battleendtime' : 0,
+      'dpsmsg' : '',
+      'party' : {}
     }
-    NPCs.push(newNPC)
+    if(getNPCIndex(e.gameId.toString()) < 0)
+    {
+      NPCs.push(newNPC)
+      getNPCInfoFromXml(e.gameId.toString())
+      //log('S_SPAWN_NPC ' + newNPC.zoneName + ' ' + newNPC.npcName)
+    }
   })
 
 
@@ -282,10 +283,10 @@ module.exports = function DPS(d,ctx) {
 
   d.hook('S_DESPAWN_NPC',3, (e) => {
     //if (!enable) return
-    id = e.gameId.toString()
-    bossindex = getBossIndex(id)
-    if( bossindex >= 0 && bosses[bossindex].battleendtime == 0){
-      bosses[bossindex].battleendtime = Date.now()
+    var id = e.gameId.toString()
+    npcIndex = getNPCIndex(id)
+    if( npcIndex >= 0 && NPCs[npcIndex].battleendtime == 0 && NPCs[npcIndex].isBoss ){
+      NPCs[npcIndex].battleendtime = Date.now()
       enraged = false
       clearTimeout(timeout)
       clearTimeout(timeoutCounter)
@@ -294,15 +295,10 @@ module.exports = function DPS(d,ctx) {
       estatus = ''
       // check if this packet comes later then attack on new boss monster
       if(id.localeCompare(currentbossId) == 0) dpsHistory += membersDps(id)
-      else dpsHistory += bosses[bossindex].dpsmsg
-      bosses.splice(bossindex,1)
+      else dpsHistory += NPCs[npcIndex].dpsmsg
     }
-    for(i in NPCs){
-      if(NPCs[i].gameId.localeCompare(id) == 0) {
-        NPCs.splice(i,1)
-      }
-    }
-
+    //log('S_DESPAWN_NPC ' + NPCs[npcIndex].npcName + ':' + NPCs[npcIndex].zoneName  )
+    NPCs.splice(npcIndex,1)
   })
 
   d.hook('S_NPC_STATUS',1, (e) => {
@@ -336,6 +332,20 @@ module.exports = function DPS(d,ctx) {
     putMeInParty()
   })
 
+  function putMeInParty()
+  {
+    newmember = {
+      'gameId' : mygId,
+      'playerId' : myplayerId,
+      'name' : myname,
+      'class' : myclass
+    }
+
+    if(!isPartyMember(mygId)) {
+      party.push(newmember)
+    }
+  }
+
   d.hook('S_PARTY_MEMBER_LIST',6,(event) => {
     party = []
     event.members.forEach(member => {
@@ -343,71 +353,13 @@ module.exports = function DPS(d,ctx) {
         'gameId' : member.gameId.toString(),
         'playerId' : member.playerId.toString(),
         'name' : member.name.toString(),
-        'class' : member.class.toString(),
-        'targetId'  :  'NONE',
-        'hit' : 0,
-        'crit' : 0,
-        'damage'  :  'NONE',
-        'critDamage' : 'NONE'
+        'class' : member.class.toString()
       }
       if(!isPartyMember(member.gameId.toString())) {
         party.push(newmember)
       }
     })
   })
-
-  // damage handler : Core
-  d.hook('S_EACH_SKILL_RESULT',6, (e) => {
-    //if (!enable) return
-
-    memberIndex = getPartyMemberIndex(e.source.toString())
-    sourceId = e.source.toString()
-    target = e.target.toString()
-
-    if(memberIndex < 0){
-      // projectile
-      ownerIndex = getPartyMemberIndex(e.owner.toString())
-      if(ownerIndex >= 0) {
-        memberIndex = ownerIndex
-        sourceId = e.owner.toString()
-      }
-      else{// pet
-        petIndex=getMemberIndexOutofNPCBySid(e.source.toString(),e.owner.toString())
-        if(petIndex >= 0) {
-          memberIndex = petIndex
-          sourceId = party[memberIndex].gameId
-        }
-        else{
-          //log('[DPS] : unhandled damage')
-          //log(e)
-        }
-      }
-    }
-
-    if(memberIndex >= 0  && e.damage > 0 && isBoss(target) && !e.blocked ){
-      if(!addMemberDamage(sourceId,target,e.damage.toString(),e.crit))
-      {
-        //log('[DPS] : unhandled damage ' + e.damage + ' target : ' + target)
-        //log('[DPS] : srcId : ' + sourceId + ' mygId : ' + mygId)
-        //log(e)
-      }
-
-      if(mygId.localeCompare(sourceId) == 0 && e.damage.gt(notice_damage)) {
-        toNotice(myDps(memberIndex,e.damage,target))
-      }
-    }
-    else
-    {
-      //log('[DPS] : unhandled damage 2 ' + e.damage + ' target:' + target)
-      //log('[DPS] : srcId' + sourceId + ' mygId:' + mygId)
-      //log(e)
-    }
-    //log(e)
-    // poison damage cannot hanndled by this packet
-
-  })
-
-
 
   fs.readFile(filename, "utf-8", function (err,data)
   {
@@ -423,42 +375,42 @@ module.exports = function DPS(d,ctx) {
     //log(findZoneMonster(152,2003)) //학살의 사브라니악
   });
 
-  function findZoneMonster(zoneId,monsterId)
+  function getNPCInfoFromXml(gId)
   {
-    if(!Number.isInteger(zoneId) || !Number.isInteger(monsterId)){
-      console.log('no Integer' +zoneId + ':' + monsterId )
-      return ''
-    }
-
     var zone,mon
-  try{
-      if(gmonsterId[monsterId] == 'undefined' || gmonsterId[monsterId] == null) {
-        gmonsterId[monsterId] = 'UNKNOWN'
-        //if(gzoneId[zoneId] == 'undefined' || gzoneId[zoneId] == null){
-          gzoneId[zoneId] = 'UNKNOWN'
-          zone = doc.getElementsByTagName("Zone")
-          for(i in zone)
-          {
-            if(zone[i].getAttribute("id") == zoneId) {
-              gzoneId[zoneId] = zone[i].getAttribute("name")
-              break
-            }
-          }
-        //}
-        mon = zone[i].getElementsByTagName("Monster")
-        for(j in mon)
-        {
-          if(mon[j].getAttribute("id") == monsterId) {
-            gmonsterId[monsterId] = mon[j].getAttribute("name")
-            break
-          }
+    var npcIndex = getNPCIndex(gId);
+    if (npcIndex < 0) return false
+    try{
+      zone = doc.getElementsByTagName("Zone")
+      for(i in zone)
+      {
+        if(zone[i].getAttribute("id") == Number(NPCs[npcIndex].huntingZoneId)) {
+          NPCs[npcIndex].zoneName = zone[i].getAttribute("name")
+          break
         }
       }
+
+      //log(NPCs[npcIndex].zoneName)
+
+      mon = zone[i].getElementsByTagName("Monster")
+      for(j in mon)
+      {
+        if(mon[j].getAttribute("id") == Number(NPCs[npcIndex].templateId)) {
+          NPCs[npcIndex].npcName = mon[j].getAttribute("name")
+          //log(NPCs[npcIndex].npcName)
+          mon[j].getAttribute("isBoss").localeCompare("True") ? NPCs[npcIndex].isBoss = false : NPCs[npcIndex].isBoss = true
+          //log(mon[j].getAttribute("isBoss"))
+          break
+        }
+      }
+
+
     }
     catch(err){
-      log('ERROR : ' + err + ' monsterId:zoneId' + monsterId + zoneId)
+      //log('ERROR : ' + err + ' monsterId:zoneId ' + NPCs[npcIndex].templateId + ':' + NPCs[npcIndex].huntingZoneId )
+      return false
     }
-    return gmonsterId[monsterId] + ':' +gzoneId[zoneId]
+    return true
   }
 
   function getMemberIndexOutofNPCBySid(sid,oid)
@@ -485,82 +437,124 @@ module.exports = function DPS(d,ctx) {
 
   function isBoss(gId)
   {
-    for(i in bosses){
+    for(var i in bosses){
       if(gId.localeCompare(bosses[i].bossId) == 0) return true
     }
     return false
   }
 
   function getBossIndex(gId){
-    for(i in bosses){
+    for(var i in bosses){
       if(gId.localeCompare(bosses[i].bossId) == 0) return i
     }
     return -1
   }
 
-
-  function getNpcName(bossId)
-  {
-    for(i in NPCs){
-      if(bossId.localeCompare(NPCs[i].gameId) == 0) return NPCs[i].name
+  function getNPCIndex(gId){
+    for(var i in NPCs){
+      //log('getNPCIndex ' + gId + ':' + NPCs[i].gameId + ' ' + NPCs[i].npcName);
+      if(gId.localeCompare(NPCs[i].gameId) == 0) return i
     }
-    return 'NONAME'
+    return -1
   }
 
   function isPartyMember(gid){
-    for(i in party){
+    for(var i in party){
       if(gid.localeCompare(party[i].gameId) == 0) return true
     }
     return false
   }
 
   function getPartyMemberIndex(id){
-    for(i in party){
-      if(id.localeCompare(party[i].gameId.valueOf()) == 0) return i
+    for(var i in party){
+      if(id.localeCompare(party[i].gameId) == 0) return i
     }
     return -1
   }
 
-  function getPartyMemberDamage(pgid)
-  {
-    id = pgid.toString()
-    for(i in party){
-      if(pgid.localeCompare(party[i].gameId.valueOf()) == 0) return party[i].damage
+  // damage handler : Core
+  d.hook('S_EACH_SKILL_RESULT',6, (e) => {
+    var memberIndex = getPartyMemberIndex(e.source.toString())
+    var sourceId = e.source.toString()
+    var target = e.target.toString()
+
+    if(e.damage.gt(0) && !e.blocked){
+      if(memberIndex >= 0){
+        // members damage
+        if(!addMemberDamage(sourceId,target,e.damage.toString(),e.crit)){
+          log('[DPS] : unhandled members damage ' + e.damage + ' target : ' + target)
+        }
+        // my damage
+        if(mygId.localeCompare(sourceId) == 0 && e.damage.gt(notice_damage)) {
+          toNotice(myDps(memberIndex,e.damage,target))
+        }
+      }
+      else if(memberIndex < 0){
+        // projectile
+        ownerIndex = getPartyMemberIndex(e.owner.toString())
+        if(ownerIndex >= 0) {
+          sourceId = e.owner.toString()
+          if(!addMemberDamage(sourceId,target,e.damage.toString(),e.crit)){
+            log('[DPS] : unhandled projectile damage ' + e.damage + ' target : ' + target)
+            //log('[DPS] : srcId : ' + sourceId + ' mygId : ' + mygId)
+            //log(e)
+          }
+        }
+        else{// pet
+          petIndex=getMemberIndexOutofNPCBySid(e.source.toString(),e.owner.toString())
+          if(petIndex >= 0) {
+            sourceId = party[petIndex].gameId
+            if(!addMemberDamage(sourceId,target,e.damage.toString(),e.crit)){
+              log('[DPS] : unhandled pet damage ' + e.damage + ' target : ' + target)
+              //log('[DPS] : srcId : ' + sourceId + ' mygId : ' + mygId)
+              //log(e)
+            }
+          }
+          else{
+            npcIndex= getNPCIndex(target)
+            if(npcIndex < 0) log('[DPS] : Target is not NPC ' + e.damage + ' target : ' + target)
+            else log('[DPS] : unhandled NPC damage ' + e.damage + ' target : ' + NPCs[npcIndex].npcName)
+          }
+        }
+      }
     }
-    log("getDamage Error : can't find the same id")
-    return 0
-  }
+  })
 
   function addMemberDamage(id,target,damage,crit)
   {
     //log('addMemberDamage ' + id + ' ' + target + ' ' + damage + ' ' + crit)
-    bossindex = getBossIndex(target)
-    if( bossindex >= 0 && bosses[bossindex].battlestarttime == 0){
-      bosses[bossindex].battlestarttime = Date.now()
-      currentbossId = target
+    npcIndex = getNPCIndex(target)
+    if(npcIndex <0) return false
+    //log(npcIndex + ':' + NPCs[npcIndex].battlestarttime)
+    if(NPCs[npcIndex].battlestarttime == 0){
+      NPCs[npcIndex].battlestarttime = Date.now()
     }
+
+    currentbossId = target
 
     for(i in party){
       if(id.localeCompare(party[i].gameId) == 0) {
-        if(party[i].targetId.localeCompare(target) == 0)
+        //new monster
+        if(typeof party[i][target] == 'undefined')
         {
-          party[i].damage = Long.fromString(damage).add(party[i].damage).toString()
-          if(crit) party[i].critDamage = Long.fromString(party[i].critDamage).add(damage).toString()
-          party[i].hit += 1
-          if(crit) party[i].crit +=1
-          //log('addMemberDamage true')
+          if(crit) critDamage = damage
+          else critDamage = "0"
+          party[i][target] = {
+            'battlestarttime' : Date.now(),
+            'damage' : damage,
+            'critDamage' : critDamage,
+            'hit' : 1,
+            'crit' : crit
+          }
+          //log('addMemberDamage true new monster')
           return true
         }
-        else{ // new monster
-          party[i].battlestarttime = Date.now()
-          party[i].targetId = target
-          party[i].damage = damage
-          if(crit) party[i].critDamage = damage
-          else party[i].critDamage = "0"
-          party[i].hit = 1
-          if(crit) party[i].crit =1
-          else party[i].crit = 0
-          //log('addMemberDamage true new monster')
+        else {
+          party[i][target].damage = Long.fromString(damage).add(party[i][target].damage).toString()
+          if(crit) party[i][target].critDamage = Long.fromString(party[i][target].critDamage).add(damage).toString()
+          party[i][target].hit += 1
+          if(crit) party[i][target].crit +=1
+          //log('addMemberDamage true ' + party[i][target].damage)
           return true
         }
       }
@@ -578,41 +572,49 @@ module.exports = function DPS(d,ctx) {
     var tdamage = new Long(0,0)
     var cdamage = new Long(0,0)
     var totalPartyDamage = new Long(0,0)
-    bossIndex = getBossIndex(targetId)
 
-    if(bossIndex < 0 ) return lastDps
-    if(bosses[bossIndex].battlestarttime == 0 ) return lastDps
+    if(targetId==='') return lastDps
 
-    if( bosses[bossIndex].battleendtime == 0) endtime=Date.now()
-    else endtime=bosses[bossIndex].battleendtime
-    battleduration = Math.floor((endtime-bosses[bossIndex].battlestarttime) / 1000)
+    npcIndex = getNPCIndex(targetId)
+
+    //if(npcIndex < 0) log(npcIndex)
+    if(npcIndex < 0) return lastDps
+
+    if( NPCs[npcIndex].battleendtime == 0) endtime=Date.now()
+    else endtime=NPCs[npcIndex].battleendtime
+    battleduration = Math.floor((endtime-NPCs[npcIndex].battlestarttime) / 1000)
 
     var minutes = Math.floor(battleduration / 60)
     var seconds = Math.floor(battleduration % 60)
 
-    dpsmsg = findZoneMonster(bosses[bossIndex].huntingZoneId,bosses[bossIndex].templateId)  + ' ' + minutes + ':' + seconds + newLine + '</br>'
+    dpsmsg = NPCs[npcIndex].npcName + ':' + NPCs[npcIndex].zoneName  + ' ' + minutes + ':' + seconds + newLine + '</br>'
     dpsmsg = dpsmsg.clr('E69F00')
     if(enraged) dpsmsg = '<img class=enraged />'+dpsmsg
 
-
-    party.sort(function(a,b) {return (Number(a.damage) < Number(b.damage)) ? 1 : ((Number(b.damage) < Number(a.damage)) ? -1 : 0);} );
+    // Help this
+    // party.sort(function(a,b) {return (Number(a.damage) < Number(b.damage)) ? 1 : ((Number(b.damage) < Number(a.damage)) ? -1 : 0);} );
 
     var cname
     var dps=0
 
     for(i in party){
-      if( battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
-        totalPartyDamage = totalPartyDamage.add(party[i].damage)
+      if( battleduration <= 0 || typeof party[i][targetId] == 'undefined' ) {
+        //log(battleduration + ':' + party[i][targetId])
+        continue
+      }
+      totalPartyDamage = totalPartyDamage.add(party[i][targetId].damage)
     }
 
     //if(!totalPartyDamage.sub(subHp).equals(0))
-      //log('sub Hp : total damage' + subHp + '-' + totalPartyDamage + '=' + subHp.sub(totalPartyDamage))
+    //log('sub Hp : total damage' + subHp + '-' + totalPartyDamage + '=' + subHp.sub(totalPartyDamage))
 
     dpsmsg += '<table><tr><td>Name</td><td>DPS (dmg)</td><th>DPS (%)</td><td>Crit</td></tr>' + newLine
     for(i in party){
-      if( totalPartyDamage.shr(10).equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0) continue
-      tdamage = Long.fromString(party[i].damage)
-      cdamage = Long.fromString(party[i].critDamage)
+      //log('totalPartyDamage ' + totalPartyDamage.shr(10).toString() + ' battleduration ' + battleduration + ' damage ')
+      if( totalPartyDamage.shr(10).equals(0) || battleduration <= 0 || typeof party[i][targetId] == 'undefined') continue
+
+      tdamage = Long.fromString(party[i][targetId].damage)
+      cdamage = Long.fromString(party[i][targetId].critDamage)
 
 
       cname=party[i].name
@@ -624,8 +626,8 @@ module.exports = function DPS(d,ctx) {
       dps = (tdamage.div(battleduration).toNumber()/1000).toFixed(1)
       dps = numberWithCommas(dps)
 
-      if(party[i].crit == 0 || party[i].hit == 0) crit = 0
-      else crit = Math.floor(party[i].crit * 100 / party[i].hit)
+      if(party[i][targetId].crit == 0 || party[i][targetId].hit == 0) crit = 0
+      else crit = Math.floor(party[i][targetId].crit * 100 / party[i][targetId].hit)
 
       dpsmsg += '<tr><td>' + cname + '</td><td> ' + dps + 'k/s '.clr('E69F00') + '</td>'
       + '<td>' + tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00') + '</td>'
@@ -635,7 +637,7 @@ module.exports = function DPS(d,ctx) {
     dpsmsg += '</table>'
 
     // for history
-    bosses[bossIndex].dpsmsg = dpsmsg
+    NPCs[npcIndex].dpsmsg = dpsmsg
     // To display last msg on ui even if boss removed from list by DESPAWN packet
     lastDps = dpsmsg
 
@@ -652,25 +654,25 @@ module.exports = function DPS(d,ctx) {
     var totalPartyDamage  = new Long(0,0)
     var dps=0
 
-    bossIndex = getBossIndex(targetId)
+    npcIndex = getNPCIndex(targetId)
 
-    if( bosses[bossIndex].battleendtime == 0) endtime=Date.now()
-    else endtime=bosses[bossIndex].battleendtime
-    battleduration = Math.floor((endtime-bosses[bossIndex].battlestarttime) / 1000)
+    if( NPCs[npcIndex].battleendtime == 0) endtime=Date.now()
+    else endtime=NPCs[npcIndex].battleendtime
+    battleduration = Math.floor((endtime-NPCs[npcIndex].battlestarttime) / 1000)
 
     var minutes = Math.floor(battleduration / 60)
     var seconds = Math.floor(battleduration % 60)
 
     for(j in party){
-      if( battleduration <= 0 || targetId.localeCompare(party[j].targetId) != 0) continue
-        totalPartyDamage = totalPartyDamage.add(party[j].damage)
+      if( battleduration <= 0 || typeof party[j][targetId] == 'undefined') continue
+      totalPartyDamage = totalPartyDamage.add(party[j][targetId].damage)
     }
 
-    if( totalPartyDamage.equals(0) || battleduration <= 0 || targetId.localeCompare(party[i].targetId) != 0){
+    if( totalPartyDamage.equals(0) || battleduration <= 0 || typeof party[i][targetId] == 'undefined'){
       return
     }
 
-    tdamage = Long.fromString(party[i].damage)
+    tdamage = Long.fromString(party[i][targetId].damage)
     dps = (tdamage.div(battleduration).toNumber()>>10).toFixed(1)
     dps = numberWithCommas(dps)
     dpsmsg = numberWithCommas(damage.shr(10).toString()) + ' k '.clr('E69F00') + dps + ' k/s '.clr('E69F00')
@@ -679,17 +681,17 @@ module.exports = function DPS(d,ctx) {
   }
 
   function timeRemaining() {
-      let i = 10
-      timeoutCounter = setInterval( () => {
-          if (enraged && i > 0) {
-              estatus = 'Boss Enraged'.clr('FF0000') + ' Time remaining : ' + `${i}`.clr('FF0000') + ' seconds'.clr('FFFFFF')
-              i--
-          } else {
-              clearInterval(timeoutCounter)
-              timeoutCounter = -1
-              estatus = ''
-          }
-      }, 1000)
+    let i = 10
+    timeoutCounter = setInterval( () => {
+      if (enraged && i > 0) {
+        estatus = 'Boss Enraged'.clr('FF0000') + ' Time remaining : ' + `${i}`.clr('FF0000') + ' seconds'.clr('FFFFFF')
+        i--
+      } else {
+        clearInterval(timeoutCounter)
+        timeoutCounter = -1
+        estatus = ''
+      }
+    }, 1000)
   }
 
   function numberWithCommas(x) {

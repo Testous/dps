@@ -19,17 +19,26 @@
 		document.getElementById("content").innerHTML = this.responseText.replace(/(\\n|\"|\\)/gm,"");
 	}
 
-	function HistoryCB() {}
-	function History() {
-		xhr("H",HistoryCB)
+	function ToPrivateCB() {}
+	function ToPrivate() {
+		xhr("H",ToPrivateCB)
 	}
 	function NoticeCB() {}
 	function Notice() {
-		var checkBox = document.getElementById("N");
+		var checkBox = document.getElementById("notice");
 		if (checkBox.checked == true){
 				xhr("1N",NoticeCB)
 		} else {
 			 xhr("0N",NoticeCB)
+		}
+	}
+	function BossOnlyCB() {}
+	function BossOnly() {
+		var checkBox = document.getElementById("bossonly");
+		if (checkBox.checked == true){
+				xhr("1O",BossOnlyCB)
+		} else {
+			 xhr("0O",BossOnlyCB)
 		}
 	}
 	function CloseDpsCB() {
@@ -42,9 +51,14 @@
 	function Debug() {
 		xhr("B",DebugCB)
 	}
-	function SendChatCB() {}
-	function SendChat() {
-		xhr("C",SendChatCB)
+	function ToGuildCB() {}
+	function ToGuild() {
+		xhr("2C",ToGuildCB)
+	}
+
+	function ToPartyCB() {}
+	function ToParty() {
+		xhr("1C",ToPartyCB)
 	}
 
 	function NoticeDamageCB() {
@@ -81,7 +95,7 @@
 	})
 
 	window.onload = function() {
-		_tera_client_proxy_.resize_to(300, 180)
+		_tera_client_proxy_.resize_to(300, 200)
 		_tera_client_proxy_.set_title('DPS')
 
 		var counter = 0;
@@ -102,17 +116,29 @@
 		return null;
 	}
 
+	if (document.addEventListener) { // IE >= 9; other browsers
+			document.addEventListener('contextmenu', function(e) {
+					_tera_client_proxy_.alert("You've tried to open context menu"); //here you draw your own menu
+					e.preventDefault();
+			}, false);
+	} else { // IE < 9
+			document.attachEvent('oncontextmenu', function() {
+					_tera_client_proxy_.alert("You've tried to open context menu");
+					window.event.returnValue = false;
+			});
+	}
 
 	</script>
 </head>
 <body>
 	<div  id="content" width=300 height=200></div >
-		<button type="button" id="H" onclick="History()">History</button>
-		<button type="button" id="A" onclick="NoticeDamageAdd()">Notice value</button>
-		<input type="checkbox" id="N" onclick="Notice()">Notice</input>
-		<button type="button" id="P" onclick="CloseDps()">CloseDps</button>
-		<button type="button" id="C" onclick="SendChat()">SendDpsToChat</button>
+		<button type="button" onclick="ToPrivate()">History</button>
+		<button type="button" onclick="ToGuild()">ToGuild</button>
+		<button type="button" onclick="ToParty()">ToParty</button><br>
+		<button type="button" onclick="NoticeDamageAdd()">Notice value</button>
+		<input type="checkbox" id="notice" onclick="Notice()">Notice</input>
+		<button type="button" onclick="CloseDps()">Close</button>
 		<br><br><br><br>
-		<button type="button" id="B" onclick="Debug()">Debug</button>
+		<button type="button" onclick="Debug()">Debug</button>
 </body>
 </html>
