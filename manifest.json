@@ -1,11 +1,11 @@
 {
 	"files": {
-		"config.json": "39288ca3024ce12c45db4f097893a668bce77bd257281235786ff568675ad743",
+		"config.json": "fd6d72a75b8ecd6c71c8f017f1eb1d1e389752bf22ca81476f3572065453f506",
 		"README.md": "ddcf79492dd99d493435eaf08fd8d6f1421fbbf035e0e7197ab6758ca76071e5",
-		"index.js": "cbcc3304ba8e9f23b2e78907ca8274fd39a48790bdb9e03b9f839882c825a0d1",
+		"index.js": "3342cfc76d6a57793c64dd3bbf312f0f7e29c0695a45b5f0f2a068677fa5cada",
 		"unzip.exe": "81046f943d26501561612a629d8be95af254bc161011ba8a62d25c34c16d6d2a",
 		"ui.zip": "e7e2c37b57b4248529ba721a9e05e53ac00527e1417664c75aa01c902a559f1e",
-		"html/index.html": "19c2d98e63bfc275292b50500301131613899ad7074992ac217cd46877a78d76",
+		"html/index.html": "69e6a59acfe31adcfaea7bbe874fe10c70088adc1d125618dbe809d6cba6cec1",
 		"html/main.css": "25807bd9971eca36d1de39a4ba1b59a94c5c96dbc76e668b4a043bb250073250",
 		"monsters/monsters-EU-FR.xml": "94dbdbdb17ef9832a22c3c8fef3390291931c97a91b6403680fb4a5a6ec350e8",
 		"monsters/monsters-EU-GER.xml": "3ceed53e2f2e6e5d2a0d6e33aa4574aabb1854d7347285faf4dc389dcce8d53a",
@@ -32,7 +32,9 @@
 		"html/class-icons/sorcerer.png": "1a34895383b01e370015880ff2ff0f3594498a90c9713c97c3f5e481ec529b80",
 		"html/class-icons/valkyrie.png": "db359c9209aed10edd2caa6b0331d36745c7f2088bb6937b7251c2facb9a4248",
 		"html/class-icons/warrior.png": "171efdf56404f82727411e31d4a07b3a2db79b2ba122618dd9d8a1e518967384",
-		"html/icons/enraged.png": "536623e510a164645c70862a594b5a0c949acdea400691590c34e54dfeb6d409"
+		"html/icons/enraged.png": "536623e510a164645c70862a594b5a0c949acdea400691590c34e54dfeb6d409",
+		"logger.js": "3488d2c4d7b15a99f054e712b31752e26b3edab54bedfbaec94c981b3e6cf17d",
+		"ui_install.js": "7d1329263f5aa037b94282773dffc796d31fcb310b54e520f699c8a2ba049653"
 	},
 	"defs": {
 		"S_LOGIN": 10,

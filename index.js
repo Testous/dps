@@ -1,91 +1,30 @@
 /**
 * Created by rkkky on 2018-05-21.
 */
-//"use strict";
+"use strict"
 const Command = require('command')
 const Long = require("long")
 const config = require('./config.json')
 const regionConfig = require('../../config.json')
+const logger = require('./logger')
 const xmldom = require('xmldom')
 const fs = require('fs')
 const path = require('path')
-const { exec } = require('child_process');
-
-if (!fs.existsSync('../ui')) {
-  exec('\"'+ __dirname + '\\unzip.exe\" '+ '\"' + __dirname + '\\ui.zip\" -d '+ '\"' +__dirname + '\\../ui\"', (err, stdout, stderr) => {
-    if (err) {
-      // node couldn't execute the command
-      console.log('node could not execute the command  : ' + err)
-      return;
-    }
-    // the *entire* stdout and stderr (buffered)
-    //console.log(`stdout: ${stdout}`);
-    if(stderr != null)console.log(`stderr: ${stderr}`);
-    console.log('------------------------------------------------')
-    console.log('Pinkie\'s UI installed please restart tera-proxy.')
-    console.log('------------------------------------------------')
-    process.exit()
-  });
-}
+const ui_install = require('./ui_install')
 const UI = require('ui')
 
 String.prototype.clr = function (hexColor) { return `<font color='#${hexColor}'>${this}</font>` }
 
-function c(method) {
-  // eslint-disable-next-line no-console
-  return (...args) => {
-    if (typeof args[0] !== 'string') {
-      const obj = args.shift();
-      if (obj.req) args.push('\nurl: ' + obj.req.url);
-      if (obj.err) args.push('\n' + obj.err.stack);
-    }
-
-    if (typeof args[0] === 'string') {
-      args[0] = `[sls] ${args[0]}`;
-    }
-
-    console[method](...args);
-  };
-}
-
-try {
-  // eslint-disable-next-line global-require, import/no-extraneous-dependencies
-  module.exports = require('baldera-logger')('tera-proxy-sls');
-} catch (err) {
-  module.exports = {
-    trace: () => {},
-    debug: () => {},
-    info: c('log'),
-    warn: c('warn'),
-    error: c('error'),
-    fatal: c('error'),
-  };
-}
-
-const errorHandler = {
-  warning(msg) {
-    log.warn({ err: msg }, 'xml parser warning');
-  },
-
-  error(msg) {
-    log.error({ err: msg }, 'xml parser error');
-  },
-
-  fatalError(msg) {
-    log.error({ err: msg }, 'xml parser fatal error');
-  },
-};
-
 module.exports = function DPS(d,ctx) {
 
   const command = Command(d)
+  const ui = UI(d)
 
   let enable = config.enable,
   notice = config.notice,
   notice_damage = config.notice_damage,
   debug = config.debug,
   region = regionConfig.region
-
 
   let mygId,
   myplayerId= '',
@@ -94,7 +33,6 @@ module.exports = function DPS(d,ctx) {
   gzoneId = new Array(),
   gmonsterId = new Array(),
   boss = new Set(),
-  bosses = new Array(),
   NPCs = new Array(),
   party = new Array(),
   dpsHistory = '',
@@ -109,182 +47,173 @@ module.exports = function DPS(d,ctx) {
   timeoutCounter = 0,
   nextEnrage = 0,
   hpPer = 0,
-  bossOnly = true
+  bossOnly = true,
+  doc = null
 
-  var filename = path.join(__dirname, '/monsters/monsters-'+ region + '.xml')
-  var doc = null
-  const ui = UI(d)
-  ui.use(UI.static(__dirname + '/html'))
+  // moster xml file
+  var monsterfile = path.join(__dirname, '/monsters/monsters-'+ region + '.xml')
+  fs.readFile(monsterfile, "utf-8", function (err,data)
+  {
+    if (err) {
+      return log(err)
+    }
+    const parser = new xmldom.DOMParser({ errorHandler })
+    doc = parser.parseFromString(data, 'text/xml')
+    if (!doc) {
+      log('ERROR xml doc')
+      return
+    }
+    //log(findZoneMonster(152,2003)) //학살의 사브라니악
+  })
 
-  const paramRegex = /(\d*)(\D*)/;
+  function getNPCInfoFromXml(gId)
+  {
+    var zone,mon
+    var npcIndex = getNPCIndex(gId)
+    if (npcIndex < 0) return false
+    try{
+      var zone = doc.getElementsByTagName("Zone")
+      for(var i in zone)
+      {
+        if(zone[i].getAttribute("id") == Number(NPCs[npcIndex].huntingZoneId)) {
+          NPCs[npcIndex].zoneName = zone[i].getAttribute("name")
+          break
+        }
+      }
 
-  function getData(param) {
-    const data = param.match(paramRegex);
-    data.shift();
-    return data;
+      var mon = zone[i].getElementsByTagName("Monster")
+      for(var j in mon)
+      {
+        if(mon[j].getAttribute("id") == Number(NPCs[npcIndex].templateId)) {
+          NPCs[npcIndex].npcName = mon[j].getAttribute("name")
+          mon[j].getAttribute("isBoss").localeCompare("True") ? NPCs[npcIndex].isBoss = false : NPCs[npcIndex].isBoss = true
+          break
+        }
+      }
+    }
+    catch(err){
+      return false
+    }
+    return true
   }
 
-  function stripOuterHTML(str) {
-    return str.replace(/^<[^>]+>|<\/[^>]+><[^\/][^>]*>|<\/[^>]+>$/g, '')
+  // awesomnium web browser UI
+  ui.use(UI.static(__dirname + '/html'))
+  ui.get(`/api/*`, api.bind(ctx))
+
+  function getData(param) {
+    var paramRegex = /(\d*)(\D*)/
+    var data = param.match(paramRegex)
+    data.shift()
+    return data
   }
 
   function api(req, res) {
-    const api = getData(req.params[0]);
+    const api = getData(req.params[0])
     var req_value = Number(api[0])
     switch(api[1]) {
+      case "L":
+      leaveParty()
+      return res.status(200).json('ok')
+      case "S":
+      resetPartyDps(currentbossId)
+      return res.status(200).json('ok')
       case "R":
-      return res.status(200).json(estatus+ '</br>' + membersDps(currentbossId) );
+      return res.status(200).json(estatus+ '</br>' + membersDps(currentbossId) )
       case "H":
       toChat(dpsHistory)
-      return res.status(200).json("ok");
+      return res.status(200).json("ok")
       case "P":
       enable = false
       send(`${enable ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')}`)
-      return res.status(200).json("ok");
+      return res.status(200).json("ok")
       case "N":
       req_value == 1 ? notice = true : notice = false
       send(`Notice to screen ${notice ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
-      return res.status(200).json("ok");
+      return res.status(200).json("ok")
       case "O":
       req_value == 1 ? bossOnly = true : bossOnly = false
       send(`Boss dps only ${bossOnly ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
-      return res.status(200).json("ok");
+      return res.status(200).json("ok")
       case "D":
-      //console.log(api)
       notice_damage = req_value
       send('Notice damage is ' + numberWithCommas(notice_damage.toString()))
-      return res.status(200).json(notice_damage.toString());
+      return res.status(200).json(notice_damage.toString())
       case "A":
-      //console.log(api)
       notice_damage += 1000000
       if(notice_damage > 20000000) notice_damage = 1000000
       send('Notice damage is ' + numberWithCommas(notice_damage.toString()))
-      return res.status(200).json(notice_damage.toString());
+      return res.status(200).json(notice_damage.toString())
       case "B":
       debug = !debug
       send(`Debug ${debug ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
-      return res.status(200).json("ok");
+      return res.status(200).json("ok")
       case "C":
       d.toServer('C_CHAT', 1, {
         "channel": req_value,
         "message": stripOuterHTML(lastDps)
       })
-      return res.status(200).json("ok");
+      return res.status(200).json("ok")
       default:
-      return res.status(404).send("404");
+      return res.status(404).send("404")
     }
   }
 
-  ui.get(`/api/*`, api.bind(ctx));
-
-
+  // packet handle
   d.hook('S_LOGIN',10, (e) => {
     mygId=e.gameId.toString()
     myplayerId=e.playerId.toString()
     myname=e.name.toString()
     //# For players the convention is 1XXYY (X = 1 + race*2 + gender, Y = 1 + class). See C_CREATE_USER
-    myclass = Number((e.templateId - 1).toString().slice(-2)).toString();
+    myclass = Number((e.templateId - 1).toString().slice(-2)).toString()
     party = []
     putMeInParty()
   })
 
   d.hook('S_SPAWN_ME',2, (e) => {
     mygId=e.gameId.toString()
-    //console.log(e)
     currentbossId = ''
-    bosses = []
     NPCs = []
     if (!enable) return
     ui.open()
   })
 
-
-
-
   d.hook('S_LOAD_TOPO',3, (e) => {
     currentZone = e.zone
   })
 
-  //Boss Monsters
   d.hook('S_BOSS_GAGE_INFO',3, (e) => {
-    //if (!enable) return
     // notified boss before battle
-    hpMax = e.maxHp
-    hpCur = e.curHp
+    var hpMax = e.maxHp
+    var hpCur = e.curHp
     subHp = e.maxHp.sub(e.curHp) // Long
-    hpPer = Math.floor((hpCur / hpMax) * 100)
+    hpPer = Math.floor(hpCur.div(hpMax) * 100)
     nextEnrage = (hpPer > 10) ? (hpPer - 10) : 0
-
-    //log(e)
-
-    if(!isBoss(e.id.toString())){
-      newboss = {
-        'bossId' : e.id.toString(),
-        'huntingZoneId' : e.huntingZoneId,
-        'templateId' : e.templateId,
-        'curHp' : e.maxHp.toString(),
-        'maxHp' : e.curHp.toString(),
-        'subHp' : subHp.toString(),
-        'battlestarttime' : 0,
-        'battleendtime' : 0,
-        'dpsmsg' : ''
-      }
-      bosses.push(newboss)
-    }
-    else{
-      id=e.id.toString()
-      for(i in bosses){
-        if(id.localeCompare(bosses[i].bossId) == 0)
-        {
-          bosses[i].curHp = e.maxHp.toString()
-          bosses[i].maxHp = e.curHp.toString()
-          bosses[i].subHp = subHp.toString()
-        }
-      }
-    }
   })
 
   d.hook('S_SPAWN_NPC',8, (e) => {
-    //if (!enable) return
     var newNPC = {
       'gameId' : e.gameId.toString(),
       'owner' : e.owner.toString(),
-      //'name' : e.npcName,
       'huntingZoneId' : e.huntingZoneId,
       'templateId' : e.templateId,
       'zoneName' : 'unknown',
-      'npcName' : 'unknown',
+      'npcName' : e.npcName,
       'isBoss' : false,
       'battlestarttime' : 0,
       'battleendtime' : 0,
-      'dpsmsg' : '',
-      'party' : {}
+      'dpsmsg' : ''
     }
     if(getNPCIndex(e.gameId.toString()) < 0)
     {
       NPCs.push(newNPC)
       getNPCInfoFromXml(e.gameId.toString())
-      //log('S_SPAWN_NPC ' + newNPC.zoneName + ' ' + newNPC.npcName)
     }
   })
 
-
-  function isMemberPet(gid)
-  {
-    for( i in party )
-    {
-      if(party[i].gameId.localeCompare(gid) == 0 ) {
-        return true
-      }
-    }
-    return false
-  }
-
-
   d.hook('S_DESPAWN_NPC',3, (e) => {
-    //if (!enable) return
     var id = e.gameId.toString()
-    npcIndex = getNPCIndex(id)
+    var npcIndex = getNPCIndex(id)
     if( npcIndex >= 0 && NPCs[npcIndex].battleendtime == 0 && NPCs[npcIndex].isBoss ){
       NPCs[npcIndex].battleendtime = Date.now()
       enraged = false
@@ -293,16 +222,14 @@ module.exports = function DPS(d,ctx) {
       timeout = 0
       timeoutCounter = 0
       estatus = ''
-      // check if this packet comes later then attack on new boss monster
+      // checking if this packet comes later then attack on new boss monster
       if(id.localeCompare(currentbossId) == 0) dpsHistory += membersDps(id)
       else dpsHistory += NPCs[npcIndex].dpsmsg
     }
-    //log('S_DESPAWN_NPC ' + NPCs[npcIndex].npcName + ':' + NPCs[npcIndex].zoneName  )
     NPCs.splice(npcIndex,1)
   })
 
   d.hook('S_NPC_STATUS',1, (e) => {
-    //if (!enable) return
     if(!isBoss(e.creature.toString())) return
     if (e.enraged === 1 && !enraged) {
       enraged = true
@@ -321,35 +248,22 @@ module.exports = function DPS(d,ctx) {
 
   //party handler
   d.hook('S_LEAVE_PARTY_MEMBER',2,(e) => {
-    id = e.playerId.toString()
-    for(i in party){
+    var id = e.playerId.toString()
+    for(var i in party){
       if(id.localeCompare(party[i].playerId) == 0) party.splice(i,1)
     }
   })
 
   d.hook('S_LEAVE_PARTY',1, (event) => {
-    party= []
+    party = []
     putMeInParty()
   })
 
-  function putMeInParty()
-  {
-    newmember = {
-      'gameId' : mygId,
-      'playerId' : myplayerId,
-      'name' : myname,
-      'class' : myclass
-    }
-
-    if(!isPartyMember(mygId)) {
-      party.push(newmember)
-    }
-  }
 
   d.hook('S_PARTY_MEMBER_LIST',6,(event) => {
     party = []
     event.members.forEach(member => {
-      newmember = {
+      var newmember = {
         'gameId' : member.gameId.toString(),
         'playerId' : member.playerId.toString(),
         'name' : member.name.toString(),
@@ -361,62 +275,55 @@ module.exports = function DPS(d,ctx) {
     })
   })
 
-  fs.readFile(filename, "utf-8", function (err,data)
+  function isMemberPet(gid)
   {
-    if (err) {
-      return log(err);
+    for(var i in party )
+    {
+      if(party[i].gameId.localeCompare(gid) == 0 ) {
+        return true
+      }
     }
-    const parser = new xmldom.DOMParser({ errorHandler });
-    doc = parser.parseFromString(data, 'text/xml');
-    if (!doc) {
-      log('ERROR xml doc')
-      return;
-    }
-    //log(findZoneMonster(152,2003)) //학살의 사브라니악
-  });
+    return false
+  }
 
-  function getNPCInfoFromXml(gId)
+  function resetPartyDps(gid)
   {
-    var zone,mon
-    var npcIndex = getNPCIndex(gId);
-    if (npcIndex < 0) return false
-    try{
-      zone = doc.getElementsByTagName("Zone")
-      for(i in zone)
-      {
-        if(zone[i].getAttribute("id") == Number(NPCs[npcIndex].huntingZoneId)) {
-          NPCs[npcIndex].zoneName = zone[i].getAttribute("name")
-          break
-        }
-      }
-
-      //log(NPCs[npcIndex].zoneName)
-
-      mon = zone[i].getElementsByTagName("Monster")
-      for(j in mon)
-      {
-        if(mon[j].getAttribute("id") == Number(NPCs[npcIndex].templateId)) {
-          NPCs[npcIndex].npcName = mon[j].getAttribute("name")
-          //log(NPCs[npcIndex].npcName)
-          mon[j].getAttribute("isBoss").localeCompare("True") ? NPCs[npcIndex].isBoss = false : NPCs[npcIndex].isBoss = true
-          //log(mon[j].getAttribute("isBoss"))
-          break
-        }
-      }
-
-
+    for(var i in party ){
+        //log('party ' + key)
+        if(typeof party[i][gid] == 'undefined') continue
+        delete party[i][gid]
     }
-    catch(err){
-      //log('ERROR : ' + err + ' monsterId:zoneId ' + NPCs[npcIndex].templateId + ':' + NPCs[npcIndex].huntingZoneId )
-      return false
+
+    for(var key in NPCs){
+      if(gid.localeCompare(NPCs[key].gameId) == 0){
+        //log('NPCs ' + key + 'NPCs[key].battlestarttime ' + NPCs[key].battlestarttime + 'NPCs[key].battleendtime '+NPCs[key].battleendtime)
+        NPCs[key].battlestarttime=0
+        NPCs[key].battleendtime=0
+      }
     }
-    return true
+  }
+
+  function leaveParty()
+  {}
+
+  function putMeInParty()
+  {
+    var newmember = {
+      'gameId' : mygId,
+      'playerId' : myplayerId,
+      'name' : myname,
+      'class' : myclass
+    }
+
+    if(!isPartyMember(mygId)) {
+      party.push(newmember)
+    }
   }
 
   function getMemberIndexOutofNPCBySid(sid,oid)
   {
-    for(i in party){
-      for(j in NPCs){
+    for(var i in party){
+      for(var j in NPCs){
         if(NPCs[j].owner.localeCompare(party[i].gameId) == 0){
           if(NPCs[j].gameId.localeCompare(sid) == 0) return i
           if(NPCs[j].gameId.localeCompare(oid) == 0) return i
@@ -426,33 +333,17 @@ module.exports = function DPS(d,ctx) {
     return -1
   }
 
-  function getBosspartyDamage(id)
-  {
-    for(i in bosses){
-      if(id.localeCompare(bosses[i].bossId) == 0) return bosses[i].subHp
-    }
-    log('getBosspartyDamage Error')
-    return '0'
-  }
-
   function isBoss(gId)
   {
-    for(var i in bosses){
-      if(gId.localeCompare(bosses[i].bossId) == 0) return true
+    for(var i in NPCs){
+      if(gId.localeCompare(NPCs[i].gameId) == 0) return NPCs[i].isBoss
     }
     return false
   }
 
-  function getBossIndex(gId){
-    for(var i in bosses){
-      if(gId.localeCompare(bosses[i].bossId) == 0) return i
-    }
-    return -1
-  }
 
   function getNPCIndex(gId){
     for(var i in NPCs){
-      //log('getNPCIndex ' + gId + ':' + NPCs[i].gameId + ' ' + NPCs[i].npcName);
       if(gId.localeCompare(NPCs[i].gameId) == 0) return i
     }
     return -1
@@ -482,7 +373,7 @@ module.exports = function DPS(d,ctx) {
       if(memberIndex >= 0){
         // members damage
         if(!addMemberDamage(sourceId,target,e.damage.toString(),e.crit)){
-          log('[DPS] : unhandled members damage ' + e.damage + ' target : ' + target)
+          //log('[DPS] : unhandled members damage ' + e.damage + ' target : ' + target)
         }
         // my damage
         if(mygId.localeCompare(sourceId) == 0 && e.damage.gt(notice_damage)) {
@@ -491,29 +382,29 @@ module.exports = function DPS(d,ctx) {
       }
       else if(memberIndex < 0){
         // projectile
-        ownerIndex = getPartyMemberIndex(e.owner.toString())
+        var ownerIndex = getPartyMemberIndex(e.owner.toString())
         if(ownerIndex >= 0) {
-          sourceId = e.owner.toString()
+          var sourceId = e.owner.toString()
           if(!addMemberDamage(sourceId,target,e.damage.toString(),e.crit)){
-            log('[DPS] : unhandled projectile damage ' + e.damage + ' target : ' + target)
+            //log('[DPS] : unhandled projectile damage ' + e.damage + ' target : ' + target)
             //log('[DPS] : srcId : ' + sourceId + ' mygId : ' + mygId)
             //log(e)
           }
         }
         else{// pet
-          petIndex=getMemberIndexOutofNPCBySid(e.source.toString(),e.owner.toString())
+          var petIndex=getMemberIndexOutofNPCBySid(e.source.toString(),e.owner.toString())
           if(petIndex >= 0) {
-            sourceId = party[petIndex].gameId
+            var sourceId = party[petIndex].gameId
             if(!addMemberDamage(sourceId,target,e.damage.toString(),e.crit)){
-              log('[DPS] : unhandled pet damage ' + e.damage + ' target : ' + target)
+              //log('[DPS] : unhandled pet damage ' + e.damage + ' target : ' + target)
               //log('[DPS] : srcId : ' + sourceId + ' mygId : ' + mygId)
               //log(e)
             }
           }
           else{
-            npcIndex= getNPCIndex(target)
-            if(npcIndex < 0) log('[DPS] : Target is not NPC ' + e.damage + ' target : ' + target)
-            else log('[DPS] : unhandled NPC damage ' + e.damage + ' target : ' + NPCs[npcIndex].npcName)
+            //var npcIndex= getNPCIndex(target)
+            //if(npcIndex < 0) log('[DPS] : Target is not NPC ' + e.damage + ' target : ' + target)
+            //else log('[DPS] : unhandled NPC damage ' + e.damage + ' target : ' + NPCs[npcIndex].npcName)
           }
         }
       }
@@ -523,7 +414,7 @@ module.exports = function DPS(d,ctx) {
   function addMemberDamage(id,target,damage,crit)
   {
     //log('addMemberDamage ' + id + ' ' + target + ' ' + damage + ' ' + crit)
-    npcIndex = getNPCIndex(target)
+    var npcIndex = getNPCIndex(target)
     if(npcIndex <0) return false
     //log(npcIndex + ':' + NPCs[npcIndex].battlestarttime)
     if(NPCs[npcIndex].battlestarttime == 0){
@@ -532,11 +423,12 @@ module.exports = function DPS(d,ctx) {
 
     currentbossId = target
 
-    for(i in party){
+    for(var i in party){
       if(id.localeCompare(party[i].gameId) == 0) {
         //new monster
         if(typeof party[i][target] == 'undefined')
         {
+          var critDamage
           if(crit) critDamage = damage
           else critDamage = "0"
           party[i][target] = {
@@ -575,14 +467,14 @@ module.exports = function DPS(d,ctx) {
 
     if(targetId==='') return lastDps
 
-    npcIndex = getNPCIndex(targetId)
+    var npcIndex = getNPCIndex(targetId)
 
     //if(npcIndex < 0) log(npcIndex)
     if(npcIndex < 0) return lastDps
 
     if( NPCs[npcIndex].battleendtime == 0) endtime=Date.now()
     else endtime=NPCs[npcIndex].battleendtime
-    battleduration = Math.floor((endtime-NPCs[npcIndex].battlestarttime) / 1000)
+    var battleduration = Math.floor((endtime-NPCs[npcIndex].battlestarttime) / 1000)
 
     var minutes = Math.floor(battleduration / 60)
     var seconds = Math.floor(battleduration % 60)
@@ -596,12 +488,12 @@ module.exports = function DPS(d,ctx) {
       if(Number(a[targetId].damage) < Number(b[targetId].damage)) return 1
       else if(Number(b[targetId].damage) < Number(a[targetId].damage)) return -1
       else return 0
-    });
+    })
 
     var cname
     var dps=0
 
-    for(i in party){
+    for(var i in party){
       if( battleduration <= 0 || typeof party[i][targetId] == 'undefined' ) {
         //log(battleduration + ':' + party[i][targetId])
         continue
@@ -613,7 +505,7 @@ module.exports = function DPS(d,ctx) {
     //log('sub Hp : total damage' + subHp + '-' + totalPartyDamage + '=' + subHp.sub(totalPartyDamage))
 
     dpsmsg += '<table><tr><td>Name</td><td>DPS (dmg)</td><th>DPS (%)</td><td>Crit</td></tr>' + newLine
-    for(i in party){
+    for(var i in party){
       //log('totalPartyDamage ' + totalPartyDamage.shr(10).toString() + ' battleduration ' + battleduration + ' damage ')
       if( totalPartyDamage.shr(10).equals(0) || battleduration <= 0 || typeof party[i][targetId] == 'undefined') continue
 
@@ -623,13 +515,14 @@ module.exports = function DPS(d,ctx) {
 
       cname=party[i].name
       if(party[i].gameId.localeCompare(mygId) == 0) cname=cname.clr('00FF00')
-      cimg = '<img class=class' +party[i].class + ' />'
+      var cimg = '<img class=class' +party[i].class + ' />'
       cname = cname + cimg
       //log(cname)
 
       dps = (tdamage.div(battleduration).toNumber()/1000).toFixed(1)
       dps = numberWithCommas(dps)
 
+      var crit
       if(party[i][targetId].crit == 0 || party[i][targetId].hit == 0) crit = 0
       else crit = Math.floor(party[i][targetId].crit * 100 / party[i][targetId].hit)
 
@@ -658,16 +551,16 @@ module.exports = function DPS(d,ctx) {
     var totalPartyDamage  = new Long(0,0)
     var dps=0
 
-    npcIndex = getNPCIndex(targetId)
+    var npcIndex = getNPCIndex(targetId)
 
     if( NPCs[npcIndex].battleendtime == 0) endtime=Date.now()
     else endtime=NPCs[npcIndex].battleendtime
-    battleduration = Math.floor((endtime-NPCs[npcIndex].battlestarttime) / 1000)
+    var battleduration = Math.floor((endtime-NPCs[npcIndex].battlestarttime) / 1000)
 
     var minutes = Math.floor(battleduration / 60)
     var seconds = Math.floor(battleduration % 60)
 
-    for(j in party){
+    for(var j in party){
       if( battleduration <= 0 || typeof party[j][targetId] == 'undefined') continue
       totalPartyDamage = totalPartyDamage.add(party[j][targetId].damage)
     }
@@ -698,8 +591,13 @@ module.exports = function DPS(d,ctx) {
     }, 1000)
   }
 
+  // helper
+  function stripOuterHTML(str) {
+    return str.replace(/^<[^>]+>|<\/[^>]+><[^\/][^>]*>|<\/[^>]+>$/g, '')
+  }
+
   function numberWithCommas(x) {
-    return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
   }
 
   function toChat(msg) {
@@ -715,9 +613,25 @@ module.exports = function DPS(d,ctx) {
       message: msg
     })
   }
+
   function send(msg) { command.message(`[DPS] : ` + [...arguments].join('\n  - '.clr('FFFFFF'))) }
+
   function log(msg) {
-    if(debug) console.log(msg);
+    if(debug) console.log(msg)
+  }
+
+  const errorHandler = {
+    warning(msg) {
+      logger.warn({ err: msg }, 'xml parser warning')
+    },
+
+    error(msg) {
+      logger.error({ err: msg }, 'xml parser error')
+    },
+
+    fatalError(msg) {
+      logger.error({ err: msg }, 'xml parser fatal error')
+    },
   }
 
   // command
@@ -728,18 +642,19 @@ module.exports = function DPS(d,ctx) {
       send(`${enable ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')}`)
     }
     else if (arg == 'u' || arg=='ui') {
-      enable = true;
+      enable = true
       send(`${enable ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')}`)
       ui.open()
     }
     else if (arg == 'nd' || arg=='notice_damage') {
       notice_damage = arg2
-      toChat('notice_damage : ' + notice_damage);
+      toChat('notice_damage : ' + notice_damage)
     }
     else if (arg == 'h' || arg=='history') {
       toChat(dpsHistory)
     }
     else if (arg == 't' || arg=='test') {
+
     }
     // notice
     else if (arg === 'n' ||  arg === 'notice') {
@@ -750,6 +665,6 @@ module.exports = function DPS(d,ctx) {
   })
 
   this.destructor = () => {
-    command.remove('dps');
-  };
+    command.remove('dps')
+  }
 }

@@ -61,6 +61,15 @@
 		xhr("1C",ToPartyCB)
 	}
 
+	function LeavePartyCB() {}
+	function LeaveParty() {
+		xhr("L",LeavePartyCB)
+	}
+	function ResetCB() {}
+	function Reset() {
+		xhr("S",ResetCB)
+	}
+
 	function NoticeDamageCB() {
 		//document.getElementById("NDV").value = this.responseText.replace(/(\")/gm,"");
 	}
@@ -134,10 +143,12 @@
 	<div  id="content" width=300 height=200></div >
 		<button type="button" onclick="ToPrivate()">History</button>
 		<button type="button" onclick="ToGuild()">ToGuild</button>
-		<button type="button" onclick="ToParty()">ToParty</button><br>
+		<button type="button" onclick="ToParty()">ToParty</button>
+		<!-- <button type="button" onclick="LeaveParty()">LeaveParty</button> -->
+		<button type="button" onclick="Reset()">Reset</button>
+		<button type="button" onclick="CloseDps()">Close</button><br>
 		<button type="button" onclick="NoticeDamageAdd()">Notice value</button>
 		<input type="checkbox" id="notice" onclick="Notice()">Notice</input>
-		<button type="button" onclick="CloseDps()">Close</button>
 		<br><br><br><br>
 		<button type="button" onclick="Debug()">Debug</button>
 </body>
