@@ -398,7 +398,7 @@ module.exports = function DPS(d,ctx) {
           if(mygId.localeCompare(sourceId) == 0){
             currentbossId = target
             if(e.damage.gt(notice_damage)) {
-              toNotice(myDps(memberIndex,e.damage,target))
+              toNotice(myDps(ownerIndex,e.damage,target))
             }
           }
 
