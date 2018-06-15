@@ -376,8 +376,11 @@ module.exports = function DPS(d,ctx) {
           //log('[DPS] : unhandled members damage ' + e.damage + ' target : ' + target)
         }
         // my damage
-        if(mygId.localeCompare(sourceId) == 0 && e.damage.gt(notice_damage)) {
-          toNotice(myDps(memberIndex,e.damage,target))
+        if(mygId.localeCompare(sourceId) == 0){
+          currentbossId = target
+          if(e.damage.gt(notice_damage)) {
+            toNotice(myDps(memberIndex,e.damage,target))
+          }
         }
       }
       else if(memberIndex < 0){
@@ -390,6 +393,15 @@ module.exports = function DPS(d,ctx) {
             //log('[DPS] : srcId : ' + sourceId + ' mygId : ' + mygId)
             //log(e)
           }
+
+          // my damage
+          if(mygId.localeCompare(sourceId) == 0){
+            currentbossId = target
+            if(e.damage.gt(notice_damage)) {
+              toNotice(myDps(memberIndex,e.damage,target))
+            }
+          }
+
         }
         else{// pet
           var petIndex=getMemberIndexOutofNPCBySid(e.source.toString(),e.owner.toString())
@@ -400,6 +412,7 @@ module.exports = function DPS(d,ctx) {
               //log('[DPS] : srcId : ' + sourceId + ' mygId : ' + mygId)
               //log(e)
             }
+
           }
           else{
             //var npcIndex= getNPCIndex(target)
@@ -420,8 +433,6 @@ module.exports = function DPS(d,ctx) {
     if(NPCs[npcIndex].battlestarttime == 0){
       NPCs[npcIndex].battlestarttime = Date.now()
     }
-
-    currentbossId = target
 
     for(var i in party){
       if(id.localeCompare(party[i].gameId) == 0) {
@@ -457,7 +468,7 @@ module.exports = function DPS(d,ctx) {
 
   function membersDps(targetId)
   {
-    var newLine = '\n'
+    var newLine = '    \n'
     var endtime = 0
     var dpsmsg = newLine
     var bossIndex = -1
