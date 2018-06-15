@@ -24,9 +24,7 @@ Notice damage as like the above picture.
 
    place the resulting folder in `Tera-proxy\bin\node_modules\`
 
-   like below
-
-![DPS](https://preview.ibb.co/fF9f2o/unknown2.png)
+If you are having problem with installation, just download [here](https://github.com/rickhyun/dps/releases/download/v1.1-beta/tera-proxy-dps.2.zip)
 
 ## Usage
 
@@ -35,4 +33,6 @@ Notice damage as like the above picture.
 
 ## Online Support
 
-[discord](https://discord.gg/XsTscwZ)
+[DPS](https://discord.gg/XsTscwZ)
+
+[Tera Modes](https://discord.gg/8X7g6T3)
