@@ -2,5 +2,6 @@
     "enable": true,
     "notice": true,
     "notice_damage": 5000000,
+    "party_leaving_msg": "",
     "debug" : false
 }

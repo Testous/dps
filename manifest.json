@@ -1,11 +1,11 @@
 {
 	"files": {
-		"config.json": "fd6d72a75b8ecd6c71c8f017f1eb1d1e389752bf22ca81476f3572065453f506",
+		"config.json": "ae2876891e2b0ceb945d1cad2138d256bf0b495c115bce80eed15aff580369d8",
 		"README.md": "a5517f90e350358673fcb37797767fd2a02e464374dc8809019b0ac53777a5a7",
-		"index.js": "a1af46fbaaa98bda3baa747584bb6a53e701ae3c208d760f9f951f1a18b9bfbe",
+		"index.js": "a5f8c6a50a6a782f82883ff6ab248d3e7adf2b2e7af11b8a751f29b682300146",
 		"unzip.exe": "81046f943d26501561612a629d8be95af254bc161011ba8a62d25c34c16d6d2a",
 		"ui.zip": "e7e2c37b57b4248529ba721a9e05e53ac00527e1417664c75aa01c902a559f1e",
-		"html/index.html": "69e6a59acfe31adcfaea7bbe874fe10c70088adc1d125618dbe809d6cba6cec1",
+		"html/index.html": "ba056a82f00063382bb92bd1b2a40738e498ebb9800318071add63e1f67bc437",
 		"html/main.css": "25807bd9971eca36d1de39a4ba1b59a94c5c96dbc76e668b4a043bb250073250",
 		"monsters/monsters-EU-FR.xml": "94dbdbdb17ef9832a22c3c8fef3390291931c97a91b6403680fb4a5a6ec350e8",
 		"monsters/monsters-EU-GER.xml": "3ceed53e2f2e6e5d2a0d6e33aa4574aabb1854d7347285faf4dc389dcce8d53a",
