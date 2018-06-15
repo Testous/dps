@@ -289,6 +289,7 @@ module.exports = function DPS(d,ctx) {
 
 	function resetPartyDps(gid)
 	{
+		lastDps =''
 		for(var i in party ){
 			//log('party ' + key)
 			if(typeof party[i][gid] == 'undefined') continue
@@ -329,13 +330,19 @@ module.exports = function DPS(d,ctx) {
 		}
 	}
 
-	function getMemberIndexOutofNPCBySid(sid,oid)
+	function getIndexOfPetOwner(sid,oid)
 	{
 		for(var i in party){
 			for(var j in NPCs){
 				if(NPCs[j].owner.localeCompare(party[i].gameId) == 0){
-					if(NPCs[j].gameId.localeCompare(sid) == 0) return i
-					if(NPCs[j].gameId.localeCompare(oid) == 0) return i
+					// pet attack
+					if(NPCs[j].gameId.localeCompare(sid) == 0) {
+						return i
+					}
+					// pet projectile
+					if(NPCs[j].gameId.localeCompare(oid) == 0) {
+						return i
+					}
 				}
 			}
 		}
@@ -413,13 +420,21 @@ module.exports = function DPS(d,ctx) {
 
 				}
 				else{// pet
-					var petIndex=getMemberIndexOutofNPCBySid(e.source.toString(),e.owner.toString())
+					var petIndex=getIndexOfPetOwner(e.source.toString(),e.owner.toString())
 					if(petIndex >= 0) {
 						var sourceId = party[petIndex].gameId
 						if(!addMemberDamage(sourceId,target,e.damage.toString(),e.crit)){
 							//log('[DPS] : unhandled pet damage ' + e.damage + ' target : ' + target)
 							//log('[DPS] : srcId : ' + sourceId + ' mygId : ' + mygId)
 							//log(e)
+						}
+
+						// notice damage
+						if(mygId.localeCompare(sourceId) == 0){
+							//currentbossId = target
+							if(e.damage.gt(notice_damage)) {
+								toNotice(noticeDps(petIndex,e.damage,target))
+							}
 						}
 
 					}
@@ -572,6 +587,8 @@ module.exports = function DPS(d,ctx) {
 		var dps=0
 
 		var npcIndex = getNPCIndex(targetId)
+
+		if(npcIndex < 0) return
 
 		if( NPCs[npcIndex].battleendtime == 0) endtime=Date.now()
 		else endtime=NPCs[npcIndex].battleendtime
