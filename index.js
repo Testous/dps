@@ -591,8 +591,12 @@ module.exports = function DPS(d,ctx) {
     dpsmsg = dpsmsg.clr('E69F00')
     if(enraged) dpsmsg = '<img class=enraged />'+dpsmsg
 
-    // Help this
-    // party.sort(function(a,b) {return (Number(a.damage) < Number(b.damage)) ? 1 : ((Number(b.damage) < Number(a.damage)) ? -1 : 0);} );
+    party.sort(function(a,b) {
+      if(typeof a[targetId] == 'undefined' || typeof b[targetId] == 'undefined') return 0
+      if(Number(a[targetId].damage) < Number(b[targetId].damage)) return 1
+      else if(Number(b[targetId].damage) < Number(a[targetId].damage)) return -1
+      else return 0
+    });
 
     var cname
     var dps=0
