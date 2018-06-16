@@ -15,8 +15,9 @@
 
 	function refreshCB()
 	{
-		//_tera_client_proxy_.set_title('Enraged')
-		document.getElementById("content").innerHTML = this.responseText.replace(/(\\n|\"|\\)/gm,"");
+		var dpsmsg = this.responseText.substring(1, this.responseText.length - 1)
+		document.getElementById("content").innerHTML = dpsmsg.replace(/(\\n|\\)/gm,"");
+		document.getElementById("debug").innerHTML = dpsmsg.replace(/(\\n|\\)/gm,"");
 	}
 
 	function ToPrivateCB() {}
@@ -151,5 +152,8 @@
 		<input type="checkbox" id="notice" onclick="Notice()">Notice</input>
 		<br><br><br><br>
 		<button type="button" onclick="Debug()">Debug</button>
+		<textarea id="debug" rows="14" cols="50"></textarea>
+
+
 </body>
 </html>

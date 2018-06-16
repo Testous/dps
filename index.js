@@ -497,7 +497,6 @@ module.exports = function DPS(d,ctx) {
 		var dpsmsg = newLine
 		var bossIndex = -1
 		var tdamage = new Long(0,0)
-		var cdamage = new Long(0,0)
 		var totalPartyDamage = new Long(0,0)
 
 		if(targetId==='') return lastDps
@@ -539,14 +538,12 @@ module.exports = function DPS(d,ctx) {
 		//if(!totalPartyDamage.sub(subHp).equals(0))
 		//log('sub Hp : total damage' + subHp + '-' + totalPartyDamage + '=' + subHp.sub(totalPartyDamage))
 
+		var fill_size = 0
+
 		dpsmsg += '<table><tr><td>Name</td><td>DPS (dmg)</td><th>DPS (%)</td><td>Crit</td></tr>' + newLine
 		for(var i in party){
 			//log('totalPartyDamage ' + totalPartyDamage.shr(10).toString() + ' battleduration ' + battleduration + ' damage ')
 			if( totalPartyDamage.shr(10).equals(0) || battleduration <= 0 || typeof party[i][targetId] == 'undefined') continue
-
-			tdamage = Long.fromString(party[i][targetId].damage)
-			cdamage = Long.fromString(party[i][targetId].critDamage)
-
 
 			cname=party[i].name
 			if(party[i].gameId.localeCompare(mygId) == 0) cname=cname.clr('00FF00')
@@ -554,17 +551,25 @@ module.exports = function DPS(d,ctx) {
 			cname = cname + cimg
 			//log(cname)
 
-			dps = (tdamage.div(battleduration).toNumber()/1000).toFixed(1)
-			dps = numberWithCommas(dps)
+			tdamage = Long.fromString(party[i][targetId].damage)
+			dps = numberWithCommas((tdamage.div(battleduration).toNumber()/1000).toFixed(1))
+
+			var percentage = tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10
+
+			// the smallest gap size from highest damage (sorted)
+			if(i==0) fill_size = 100 - percentage
+
+			// add the gap size for each member graph
+			var graph_size = percentage + fill_size
 
 			var crit
 			if(party[i][targetId].crit == 0 || party[i][targetId].hit == 0) crit = 0
 			else crit = Math.floor(party[i][targetId].crit * 100 / party[i][targetId].hit)
 
-			dpsmsg += '<tr><td>' + cname + '</td><td> ' + dps + 'k/s '.clr('E69F00') + '</td>'
-			+ '<td>' + tdamage.shr(10).multiply(1000).div(totalPartyDamage.shr(10)).toNumber()/10  + '% '.clr('E69F00') + '</td>'
-			//+ '<td>' + cdamage.shr(10).multiply(1000).div(tdamage.shr(10)).toNumber()/10  + '% '.clr('E69F00') + '</td></tr>'+ newLine
-			+ '<td>' +  crit  + '% '.clr('E69F00') + '</td></tr>'+ newLine
+			dpsmsg +='<tr><td>' + cname + '</td><td> ' + dps + 'k/s '.clr('E69F00') + '</td>'
+			+ `<td style="background: url('./icons/bar.jpg'); background-repeat: no-repeat; background-size: ${graph_size}% 100%;">` + percentage  + '% '.clr('E69F00') + '</td>'
+			+ '<td class=graph>' +  crit  + '% '.clr('E69F00') + '</td></tr>'+ newLine
+			//log(dpsmsg)
 		}
 		dpsmsg += '</table>'
 
