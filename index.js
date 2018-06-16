@@ -276,17 +276,6 @@ module.exports = function DPS(d,ctx) {
 		})
 	})
 
-	function isMemberPet(gid)
-	{
-		for(var i in party )
-		{
-			if(party[i].gameId.localeCompare(gid) == 0 ) {
-				return true
-			}
-		}
-		return false
-	}
-
 	function resetPartyDps(gid)
 	{
 		lastDps =''
@@ -309,7 +298,7 @@ module.exports = function DPS(d,ctx) {
 	{
 		if(leaving_msg!=''){
 			d.toServer('C_CHAT', 1, {
-				"channel": 2,
+				"channel": 1,
 				"message": leaving_msg
 			})
 		}
@@ -567,7 +556,7 @@ module.exports = function DPS(d,ctx) {
 			else crit = Math.floor(party[i][targetId].crit * 100 / party[i][targetId].hit)
 
 			dpsmsg +='<tr><td>' + cname + '</td><td> ' + dps + 'k/s '.clr('E69F00') + '</td>'
-			+ `<td style="background: url('./icons/bar.jpg'); background-repeat: no-repeat; background-size: ${graph_size}% 100%;">` + percentage  + '% '.clr('E69F00') + '</td>'
+			+ `<td style="background: url('./icons/bar.jpg'); background-repeat: no-repeat; background-size: ${graph_size}% 20%;">` + percentage  + '% '.clr('E69F00') + '</td>'
 			+ '<td class=graph>' +  crit  + '% '.clr('E69F00') + '</td></tr>'+ newLine
 			//log(dpsmsg)
 		}

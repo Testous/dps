@@ -5,7 +5,7 @@ Bluehole or Nexon recommand to donate here.
 
 ## Introduction
 
-Tera internal DPS meter.
+Tera internal DPS monitor.(TDM)
 
 Enraged notifies in real time.
 
