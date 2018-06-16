@@ -52,6 +52,19 @@ module.exports = function DPS(d,ctx) {
 	doc = null
 
 	// moster xml file
+	const errorHandler = {
+		warning(msg) {
+			logger.warn({ err: msg }, 'xml parser warning')
+		},
+
+		error(msg) {
+			logger.error({ err: msg }, 'xml parser error')
+		},
+
+		fatalError(msg) {
+			logger.error({ err: msg }, 'xml parser fatal error')
+		},
+	}
 	var monsterfile = path.join(__dirname, '/monsters/monsters-'+ region + '.xml')
 	fs.readFile(monsterfile, "utf-8", function (err,data)
 	{
@@ -122,7 +135,7 @@ module.exports = function DPS(d,ctx) {
 			case "R":
 			return res.status(200).json(estatus+ '</br>' + membersDps(currentbossId) )
 			case "H":
-			toChat(dpsHistory)
+			//toChat(dpsHistory)
 			return res.status(200).json(dpsHistory)
 			case "P":
 			enable = false
@@ -278,6 +291,7 @@ module.exports = function DPS(d,ctx) {
 
 	function resetPartyDps(gid)
 	{
+		dpsHistory=''
 		lastDps =''
 		for(var i in party ){
 			//log('party ' + key)
@@ -368,6 +382,21 @@ module.exports = function DPS(d,ctx) {
 		return -1
 	}
 
+	function setCurBoss(gid)
+	{
+		if(currentbossId.localeCompare(gid)==0) return
+
+		if(!bossOnly) {
+			currentbossId = gid
+			return
+		}
+
+		if(bossOnly && isBoss(gid)) {
+			currentbossId = gid
+			return
+		}
+
+	}
 	// damage handler : Core
 	d.hook('S_EACH_SKILL_RESULT',d.base.majorPatchVersion < 74 ? 7:8, (e) => {
 		var memberIndex = getPartyMemberIndex(e.source.toString())
@@ -382,7 +411,8 @@ module.exports = function DPS(d,ctx) {
 				}
 				// notice damage
 				if(mygId.localeCompare(sourceId) == 0){
-					currentbossId = target
+					setCurBoss(target)
+					//currentbossId = target
 					if(e.damage.gt(notice_damage)) {
 						toNotice(noticeDps(memberIndex,e.damage,target))
 					}
@@ -401,7 +431,8 @@ module.exports = function DPS(d,ctx) {
 
 					// notice damage
 					if(mygId.localeCompare(sourceId) == 0){
-						currentbossId = target
+						setCurBoss(target)
+						//currentbossId = target
 						if(e.damage.gt(notice_damage)) {
 							toNotice(noticeDps(ownerIndex,e.damage,target))
 						}
@@ -420,6 +451,7 @@ module.exports = function DPS(d,ctx) {
 
 						// notice damage
 						if(mygId.localeCompare(sourceId) == 0){
+							setCurBoss(target)
 							//currentbossId = target
 							if(e.damage.gt(notice_damage)) {
 								toNotice(noticeDps(petIndex,e.damage,target))
@@ -651,20 +683,6 @@ module.exports = function DPS(d,ctx) {
 		if(debug) console.log(msg)
 	}
 
-	const errorHandler = {
-		warning(msg) {
-			logger.warn({ err: msg }, 'xml parser warning')
-		},
-
-		error(msg) {
-			logger.error({ err: msg }, 'xml parser error')
-		},
-
-		fatalError(msg) {
-			logger.error({ err: msg }, 'xml parser fatal error')
-		},
-	}
-
 	// command
 	command.add('dps', (arg, arg2,arg3) => {
 		// toggle
@@ -685,7 +703,11 @@ module.exports = function DPS(d,ctx) {
 			toChat(dpsHistory)
 		}
 		else if (arg == 't' || arg=='test') {
+			var tmptxt
+			for(var i=0;i<10000;i++)
+				tmptxt+='test '
 
+			toChat(tmptxt)
 		}
 		// notice
 		else if (arg === 'n' ||  arg === 'notice') {

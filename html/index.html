@@ -5,6 +5,8 @@
 	<script>
 	var x
 	var waitForThis = false;
+	var previousDps = ''
+
 	function xhr(url, cb) {
 		x = new XMLHttpRequest();
 		pending = true;
@@ -16,9 +18,11 @@
 
 	function refreshCB()
 	{
+		if(previousDps.localeCompare(this.responseText) == 0) return
 		var dpsmsg = this.responseText.substring(1, this.responseText.length - 1)
 		document.getElementById("content").innerHTML = dpsmsg.replace(/(\\n|\\)/gm,"");
 		document.getElementById("debug").innerHTML = dpsmsg.replace(/(\\n|\\)/gm,"");
+		previousDps = this.responseText
 	}
 
 	function ToPrivateCB() {
@@ -28,6 +32,7 @@
 	}
 	function ToPrivate() {
 		waitForThis = true
+		previousDps = ''
 		xhr("H",ToPrivateCB)
 	}
 	function NoticeCB() {}
@@ -151,13 +156,14 @@
 <body>
 	<div  id="content" width=300 height=200></div >
 		<button type="button" onclick="ToPrivate()">History</button>
-		<button type="button" onclick="ToGuild()">ToGuild</button>
+		<!--<button type="button" onclick="ToGuild()">ToGuild</button>-->
 		<button type="button" onclick="ToParty()">ToParty</button>
 		<button type="button" onclick="LeaveParty()">LeaveParty</button>
 		<button type="button" onclick="Reset()">Reset</button>
 		<button type="button" onclick="CloseDps()">Close</button><br>
 		<button type="button" onclick="NoticeDamageAdd()">Notice value</button>
 		<input type="checkbox" id="notice" onclick="Notice()">Notice</input>
+		<input type="checkbox" id="bossonly" onclick="BossOnly()">bossOnly</input>
 		<br><br><br><br>
 		<button type="button" onclick="Debug()">Debug</button>
 		<textarea id="debug" rows="14" cols="50"></textarea>
