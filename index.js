@@ -188,7 +188,7 @@ module.exports = function DPS(d,ctx) {
 		var hpMax = e.maxHp
 		var hpCur = e.curHp
 		subHp = e.maxHp.sub(e.curHp) // Long
-		hpPer = Math.floor(hpCur.div(hpMax) * 100)
+		hpPer = hpCur.multiply(100).div(hpMax)
 		nextEnrage = (hpPer > 10) ? (hpPer - 10) : 0
 	})
 
@@ -555,8 +555,8 @@ module.exports = function DPS(d,ctx) {
 			if(party[i][targetId].crit == 0 || party[i][targetId].hit == 0) crit = 0
 			else crit = Math.floor(party[i][targetId].crit * 100 / party[i][targetId].hit)
 
-			dpsmsg +='<tr><td>' + cname + '</td><td> ' + dps + 'k/s '.clr('E69F00') + '</td>'
-			+ `<td style="background: url('./icons/bar.jpg'); background-repeat: no-repeat; background-size: ${graph_size}% 20%;">` + percentage  + '% '.clr('E69F00') + '</td>'
+			dpsmsg +='<tr><td>' + cname + '</td>' + `<td style="background: url('./icons/bar.jpg'); background-repeat: no-repeat; background-size: ${graph_size}% 20%;">` + dps + 'k/s '.clr('E69F00') + '</td>'
+			+ '<td>' + percentage  + '% '.clr('E69F00') + '</td>'
 			+ '<td class=graph>' +  crit  + '% '.clr('E69F00') + '</td></tr>'+ newLine
 			//log(dpsmsg)
 		}
@@ -612,7 +612,7 @@ module.exports = function DPS(d,ctx) {
 		let i = 10
 		timeoutCounter = setInterval( () => {
 			if (enraged && i > 0) {
-				estatus = 'Boss Enraged'.clr('FF0000') + ' Time remaining : ' + `${i}`.clr('FF0000') + ' seconds'.clr('FFFFFF')
+				estatus = 'Boss Enraged'.clr('FF0000') + ' ' + `${i}`.clr('FF0000') + ' seconds left'.clr('FFFFFF')
 				i--
 			} else {
 				clearInterval(timeoutCounter)
