@@ -196,6 +196,14 @@ module.exports = function DPS(d,ctx) {
 		currentZone = e.zone
 	})
 
+     d.hook('S_ANSWER_INTERACTIVE', 2, (e) => {
+         d.send('C_REQUEST_USER_PAPERDOLL_INFO', 1, {
+		     name: e.name
+		})
+
+		log(e.name)
+     })
+
 	d.hook('S_BOSS_GAGE_INFO',3, (e) => {
 		// notified boss before battle
 		var hpMax = e.maxHp
@@ -228,18 +236,29 @@ module.exports = function DPS(d,ctx) {
 	d.hook('S_DESPAWN_NPC',3, (e) => {
 		var id = e.gameId.toString()
 		var npcIndex = getNPCIndex(id)
-		if( npcIndex >= 0 && NPCs[npcIndex].battleendtime == 0 && NPCs[npcIndex].isBoss ){
-			NPCs[npcIndex].battleendtime = Date.now()
+		var duration = 0
+		if(npcIndex <0) return
+		if(NPCs[npcIndex].battleendtime == 0) NPCs[npcIndex].battleendtime == Date.now()
+		if(NPCs[npcIndex].battlestarttime > 0) duration = NPCs[npcIndex].battleendtime - NPCs[npcIndex].battlestarttime
+
+		if(NPCs[npcIndex].isBoss){
 			enraged = false
 			clearTimeout(timeout)
 			clearTimeout(timeoutCounter)
 			timeout = 0
 			timeoutCounter = 0
 			estatus = ''
-			// checking if this packet comes later then attack on new boss monster
-			if(id.localeCompare(currentbossId) == 0) dpsHistory += membersDps(id)
-			else dpsHistory += NPCs[npcIndex].dpsmsg
 		}
+
+		// dps history
+		if(NPCs[npcIndex].isBoss || duration > 1000 * 60 * 3)
+		{
+			//log(NPCs[npcIndex].npcName + ' ' + Number(NPCs[npcIndex].isBoss))
+			if(id.localeCompare(currentbossId) == 0) dpsHistory += '<BR>' + membersDps(id)
+			// if this packet comes later then attacking on new boss monster or not Boss but over 3min battle
+			else dpsHistory += '<BR>' + NPCs[npcIndex].dpsmsg
+		}
+
 		NPCs.splice(npcIndex,1)
 	})
 
@@ -644,7 +663,7 @@ module.exports = function DPS(d,ctx) {
 		let i = 10
 		timeoutCounter = setInterval( () => {
 			if (enraged && i > 0) {
-				estatus = 'Boss Enraged'.clr('FF0000') + ' ' + `${i}`.clr('FF0000') + ' seconds left'.clr('FFFFFF')
+				estatus = 'Boss Enraged'.clr('FF0000') + ' ' + `${i}`.clr('FFFFFF') + ' seconds left'.clr('FF0000')
 				i--
 			} else {
 				clearInterval(timeoutCounter)
