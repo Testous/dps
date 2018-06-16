@@ -123,7 +123,7 @@ module.exports = function DPS(d,ctx) {
 			return res.status(200).json(estatus+ '</br>' + membersDps(currentbossId) )
 			case "H":
 			toChat(dpsHistory)
-			return res.status(200).json("ok")
+			return res.status(200).json(dpsHistory)
 			case "P":
 			enable = false
 			send(`${enable ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')}`)

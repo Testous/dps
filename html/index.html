@@ -4,6 +4,7 @@
 	<link rel="stylesheet" href="main.css" />
 	<script>
 	var x
+	var waitForThis = false;
 	function xhr(url, cb) {
 		x = new XMLHttpRequest();
 		pending = true;
@@ -20,26 +21,31 @@
 		document.getElementById("debug").innerHTML = dpsmsg.replace(/(\\n|\\)/gm,"");
 	}
 
-	function ToPrivateCB() {}
+	function ToPrivateCB() {
+		var dpsmsg = '<button type="button" onclick="refreshDPS()">Return</button><br>' + this.responseText.substring(1, this.responseText.length - 1)
+		document.getElementById("content").innerHTML = dpsmsg.replace(/(\\n|\\)/gm,"");
+		document.getElementById("debug").innerHTML = dpsmsg.replace(/(\\n|\\)/gm,"");
+	}
 	function ToPrivate() {
+		waitForThis = true
 		xhr("H",ToPrivateCB)
 	}
 	function NoticeCB() {}
 	function Notice() {
 		var checkBox = document.getElementById("notice");
 		if (checkBox.checked == true){
-				xhr("1N",NoticeCB)
+			xhr("1N",NoticeCB)
 		} else {
-			 xhr("0N",NoticeCB)
+			xhr("0N",NoticeCB)
 		}
 	}
 	function BossOnlyCB() {}
 	function BossOnly() {
 		var checkBox = document.getElementById("bossonly");
 		if (checkBox.checked == true){
-				xhr("1O",BossOnlyCB)
+			xhr("1O",BossOnlyCB)
 		} else {
-			 xhr("0O",BossOnlyCB)
+			xhr("0O",BossOnlyCB)
 		}
 	}
 	function CloseDpsCB() {
@@ -84,41 +90,43 @@
 	}
 
 	function Clipboard() {
-	  var copyText = document.getElementById("txt");
-	  copyText.select();
-	  document.execCommand("copy");
+		var copyText = document.getElementById("txt");
+		copyText.select();
+		document.execCommand("copy");
 	}
 
 	function validate(evt) {
-  var theEvent = evt || window.event;
-  var key = theEvent.keyCode || theEvent.which;
-  key = String.fromCharCode( key );
-  var regex = /[0-9]|\./;
-  if( !regex.test(key) ) {
-    theEvent.returnValue = false;
-    if(theEvent.preventDefault) theEvent.preventDefault();
-  }
-}
+		var theEvent = evt || window.event;
+		var key = theEvent.keyCode || theEvent.which;
+		key = String.fromCharCode( key );
+		var regex = /[0-9]|\./;
+		if( !regex.test(key) ) {
+			theEvent.returnValue = false;
+			if(theEvent.preventDefault) theEvent.preventDefault();
+		}
+	}
 
 	window.addEventListener('error', function(e) {
 		_tera_client_proxy_.alert('Error: ' + e.message)
 	})
 
+	function refreshDPS()
+	{
+		//_tera_client_proxy_.alert('test')
+		waitForThis = false
+		var i = setInterval(function(){
+			if(waitForThis){
+				clearInterval(i);
+				return
+			}
+			xhr("R",refreshCB)
+		}, 1000);
+	}
+
 	window.onload = function() {
 		_tera_client_proxy_.resize_to(300, 200)
 		_tera_client_proxy_.set_title('DPS')
-
-		var counter = 0;
-		var i = setInterval(function(){
-		    // do your thing
-				xhr("R",refreshCB)
-
-		    counter++;
-		    if(counter % 0) {
-		        //clearInterval(i);
-		    }
-		}, 1000);
-
+		refreshDPS()
 	}
 
 	window.onbeforeunload =  function() {
@@ -127,15 +135,15 @@
 	}
 
 	if (document.addEventListener) { // IE >= 9; other browsers
-			document.addEventListener('contextmenu', function(e) {
-					_tera_client_proxy_.alert("You've tried to open context menu"); //here you draw your own menu
-					e.preventDefault();
-			}, false);
+		document.addEventListener('contextmenu', function(e) {
+			_tera_client_proxy_.alert("You've tried to open context menu"); //here you draw your own menu
+			e.preventDefault();
+		}, false);
 	} else { // IE < 9
-			document.attachEvent('oncontextmenu', function() {
-					_tera_client_proxy_.alert("You've tried to open context menu");
-					window.event.returnValue = false;
-			});
+		document.attachEvent('oncontextmenu', function() {
+			_tera_client_proxy_.alert("You've tried to open context menu");
+			window.event.returnValue = false;
+		});
 	}
 
 	</script>
