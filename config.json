@@ -2,6 +2,6 @@
     "enable": true,
     "notice": true,
     "notice_damage": 5000000,
-    "party_leaving_msg": "",
-    "debug" : false
+    "party_leaving_msg": "수고했습니다.",
+    "debug" : true
 }

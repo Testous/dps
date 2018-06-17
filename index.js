@@ -228,6 +228,8 @@ module.exports = function DPS(d,ctx) {
 		//# For players the convention is 1XXYY (X = 1 + race*2 + gender, Y = 1 + class). See C_CREATE_USER
 		myclass = Number((e.templateId - 1).toString().slice(-2)).toString()
 		party = []
+		NPCs = []
+		dpsHistory = ''
 		putMeInParty()
 	})
 
@@ -244,9 +246,11 @@ module.exports = function DPS(d,ctx) {
 	})
 
      d.hook('S_ANSWER_INTERACTIVE', 2, (e) => {
-         d.send('C_REQUEST_USER_PAPERDOLL_INFO', 1, {
-		     name: e.name
-		})
+		if(debug){
+         		d.send('C_REQUEST_USER_PAPERDOLL_INFO', 1, {
+		     	name: e.name
+			})
+		}
      })
 
 	d.hook('S_BOSS_GAGE_INFO',3, (e) => {
