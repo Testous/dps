@@ -49,7 +49,8 @@ module.exports = function DPS(d,ctx) {
 	nextEnrage = 0,
 	hpPer = 0,
 	bossOnly = true,
-	doc = null
+	doc = null,
+	odoc = null
 
 	// moster xml file
 	const errorHandler = {
@@ -100,6 +101,52 @@ module.exports = function DPS(d,ctx) {
 			{
 				if(mon[j].getAttribute("id") == Number(NPCs[npcIndex].templateId)) {
 					NPCs[npcIndex].npcName = mon[j].getAttribute("name")
+					mon[j].getAttribute("isBoss").localeCompare("True") ? NPCs[npcIndex].isBoss = false : NPCs[npcIndex].isBoss = true
+					overrideIsBoss(gId)
+					break
+				}
+			}
+		}
+		catch(err){
+			return false
+		}
+		return true
+	}
+	//override.xml
+	var override = path.join(__dirname, '/monsters/monsters-override.xml')
+	fs.readFile(override, "utf-8", function (err,data)
+	{
+		if (err) {
+			return log(err)
+		}
+		const oparser = new xmldom.DOMParser({ errorHandler })
+		odoc = oparser.parseFromString(data, 'text/xml')
+		if (!odoc) {
+			log('ERROR xml odoc')
+			return
+		}
+	})
+
+	function overrideIsBoss(gId)
+	{
+		var zone,mon
+		var npcIndex = getNPCIndex(gId)
+		if (npcIndex < 0) return false
+		try{
+			var zone = odoc.getElementsByTagName("Zone")
+			for(var i in zone)
+			{
+				if(zone[i].getAttribute("id") == Number(NPCs[npcIndex].huntingZoneId)) {
+					//NPCs[npcIndex].zoneName = zone[i].getAttribute("name")
+					break
+				}
+			}
+
+			var mon = zone[i].getElementsByTagName("Monster")
+			for(var j in mon)
+			{
+				if(mon[j].getAttribute("id") == Number(NPCs[npcIndex].templateId)) {
+					//NPCs[npcIndex].npcName = mon[j].getAttribute("name")
 					mon[j].getAttribute("isBoss").localeCompare("True") ? NPCs[npcIndex].isBoss = false : NPCs[npcIndex].isBoss = true
 					break
 				}
