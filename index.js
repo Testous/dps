@@ -168,12 +168,6 @@ module.exports = function DPS(d,ctx) {
 			debug = !debug
 			send(`Debug ${debug ? 'enabled'.clr('56B4E9') : 'disabled'.clr('E69F00')}`)
 			return res.status(200).json("ok")
-			case "C":
-			d.toServer('C_CHAT', 1, {
-				"channel": req_value,
-				"message": stripOuterHTML(lastDps)
-			})
-			return res.status(200).json("ok")
 			default:
 			return res.status(404).send("404")
 		}
@@ -620,7 +614,8 @@ module.exports = function DPS(d,ctx) {
 		// for history
 		NPCs[npcIndex].dpsmsg = dpsmsg
 		// To display last msg on ui even if boss removed from list by DESPAWN packet
-		lastDps = dpsmsg
+		if(bossOnly && NPCs[npcIndex].isBoss ) lastDps = dpsmsg
+		if(!bossOnly) lastDps = dpsmsg
 
 		return dpsmsg
 	}
