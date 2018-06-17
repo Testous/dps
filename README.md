@@ -34,7 +34,7 @@ If you are having problem with installation, just download [here](https://github
 - Enraged notifier on UI
 - If you don't want to pop up dps meter, press Close button on bottom. (X button on title is not same)
 - you can automate party leaving message by setting party_leaving_msg in config.json. Then press LeaveParty button.
-- Reset clears history and npc data (), Data is reset by switching charactors anyway.
+- Reset clears history and npc data, Data is reset by switching charactors anyway.
 - DPS history is shown in the UI
 - Whisper lastest dps to a user type in the input
 - Right click on LFG pops up inspecting window (debug mode only)
@@ -49,6 +49,8 @@ If you are having problem with installation, just download [here](https://github
 - @Gl0#0588 ([Shinrameter](https://github.com/neowutran/ShinraMeter/wiki)) : monster xml data and class-icons
 - @seraphinush#5417 : enraged-notifier
 - @Pinkie Pie#7969 : awesomnium UI
+- @JustPassingBy#4413 : infinity journal
+- @Xiphion#4197 :readme screenshot
 - @Caali#7241 : auto-update
 
 ## License
