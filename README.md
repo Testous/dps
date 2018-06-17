@@ -7,7 +7,7 @@ BHS should donate here.
 
 Tera DPS monitor.(TDM)
 Internal dps UI
-Light cpu usage when gathering dps data in Raid.
+For low spec PC
 
 ## Prerequisite
 
@@ -46,8 +46,10 @@ If you are having problem with installation, just download [here](https://github
 ## Referenced source
 
 [Tera Modes](https://discord.gg/8X7g6T3)
-@Gl0#0588 (Shinrameter) : monster xml data and class-icons
-@seraphinush#5417 : enraged-notifier
+- @Gl0#0588 ([Shinrameter](https://github.com/neowutran/ShinraMeter/wiki)) : monster xml data and class-icons
+- @seraphinush#5417 : enraged-notifier
+- @Pinkie Pie#7969 : awesomnium UI
+- @Caali#7241 : auto-update
 
 ## License
 GPL
