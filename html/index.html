@@ -28,13 +28,23 @@
 	function ToPrivateCB() {
 		var dpsmsg = '<button type="button" onclick="refreshDPS()">Return</button><br>' + this.responseText.substring(1, this.responseText.length - 1)
 		document.getElementById("content").innerHTML = dpsmsg.replace(/(\\n|\\)/gm,"");
-		document.getElementById("debug").innerHTML = dpsmsg.replace(/(\\n|\\)/gm,"");
 	}
 	function ToPrivate() {
 		waitForThis = true
 		previousDps = ''
 		xhr("H",ToPrivateCB)
 	}
+
+	function stripOuterHTML(str) {
+		return str.replace(/\'|^<[^>]+>|<\/[^>]+><[^\/][^>]*>|<\/[^>]+>$/g, '')
+	}
+	function WhisperCB() {}
+	function Whisper() {
+		var name = document.getElementById("name").value;
+		xhr("0W"+ name,WhisperCB)
+		//xhr("1W"+ stripOuterHTML(document.getElementById("debug").value),WhisperCB)
+	}
+
 	function NoticeCB() {}
 	function Notice() {
 		var checkBox = document.getElementById("notice");
@@ -156,8 +166,10 @@
 <body>
 	<div  id="content" width=300 height=200></div >
 		<button type="button" onclick="ToPrivate()">History</button>
+		<input type="text" size="1" id="name" value="">
+		<button type="button" onclick="Whisper()">Whisper</button>
 		<!--<button type="button" onclick="ToGuild()">ToGuild</button>-->
-		<button type="button" onclick="ToParty()">ToParty</button>
+		<!--<button type="button" onclick="ToParty()">ToParty</button>-->
 		<button type="button" onclick="LeaveParty()">LeaveParty</button>
 		<button type="button" onclick="Reset()">Reset</button>
 		<button type="button" onclick="CloseDps()">Close</button><br>
@@ -166,7 +178,7 @@
 		<input type="checkbox" id="bossonly" onclick="BossOnly()">bossOnly</input>
 		<br><br><br><br>
 		<button type="button" onclick="Debug()">Debug</button>
-		<textarea id="debug" rows="14" cols="50"></textarea>
+		<textarea id="debug" maxLength="2000" rows="14" cols="50"></textarea>
 
 
 </body>

@@ -116,7 +116,7 @@ module.exports = function DPS(d,ctx) {
 	ui.get(`/api/*`, api.bind(ctx))
 
 	function getData(param) {
-		var paramRegex = /(\d*)(\D*)/
+		var paramRegex = /(\d*)(\D)/
 		var data = param.match(paramRegex)
 		data.shift()
 		return data
@@ -126,6 +126,13 @@ module.exports = function DPS(d,ctx) {
 		const api = getData(req.params[0])
 		var req_value = Number(api[0])
 		switch(api[1]) {
+			case "W":
+			var wname = req.params[0].substring(2, req.params[0].length)
+			d.toServer('C_WHISPER', 1, {
+				"target": wname,
+				"message": stripOuterHTML(lastDps)
+			})
+			return res.status(200).json('ok')
 			case "L":
 			leaveParty()
 			return res.status(200).json('ok')
@@ -135,7 +142,6 @@ module.exports = function DPS(d,ctx) {
 			case "R":
 			return res.status(200).json(estatus+ '</br>' + membersDps(currentbossId) )
 			case "H":
-			//toChat(dpsHistory)
 			return res.status(200).json(dpsHistory)
 			case "P":
 			enable = false
@@ -200,8 +206,6 @@ module.exports = function DPS(d,ctx) {
          d.send('C_REQUEST_USER_PAPERDOLL_INFO', 1, {
 		     name: e.name
 		})
-
-		log(e.name)
      })
 
 	d.hook('S_BOSS_GAGE_INFO',3, (e) => {
