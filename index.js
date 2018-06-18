@@ -466,7 +466,7 @@ module.exports = function DPS(d,ctx) {
 
 	}
 	// damage handler : Core
-	d.hook('S_EACH_SKILL_RESULT',d.base.majorPatchVersion < 74 ? 7:8, (e) => {
+	d.hook('S_EACH_SKILL_RESULT',d.base.majorPatchVersion < 74 ? 7:9, (e) => {
 		var memberIndex = getPartyMemberIndex(e.source.toString())
 		var sourceId = e.source.toString()
 		var target = e.target.toString()
