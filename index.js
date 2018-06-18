@@ -187,7 +187,7 @@ module.exports = function DPS(d,ctx) {
 			resetPartyDps(currentbossId)
 			return res.status(200).json('ok')
 			case "R":
-			return res.status(200).json(statusIcons() + '</br>' +estatus+ '</br>' + membersDps(currentbossId) )
+			return res.status(200).json(estatus+ '</br>' + membersDps(currentbossId) )
 			case "H":
 			return res.status(200).json(dpsHistory)
 			case "P":
@@ -577,15 +577,6 @@ module.exports = function DPS(d,ctx) {
 		}
 		//log('addMemberDamage false')
 		return false
-	}
-	
-	function statusIcons() 
-	{
-		var statusmsg = ''
-		statusmsg += 'Boss Only ' + ((bossOnly) ? 'Enabled '.clr('56B4E9') : 'Disabled '.clr('E69F00'))
-		statusmsg += 'Notice ' + ((notice) ? 'Enabled '.clr('56B4E9') : 'Disabled '.clr('E69F00'))
-
-		return statusmsg
 	}
 
 	function membersDps(targetId)
